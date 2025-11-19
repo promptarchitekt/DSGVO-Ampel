@@ -24,30 +24,30 @@ const cards = [
 
 export default function HomePage() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12">
-      <section className="rounded-3xl border border-slate-200 bg-white p-10 shadow-xl shadow-slate-900/5">
+    <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12 text-[var(--pa-foreground)]">
+      <section className="rounded-3xl border border-white/10 bg-[var(--pa-surface)]/80 p-10 shadow-[0_35px_120px_rgba(0,0,0,0.55)]">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1 text-sm font-medium text-emerald-700">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-[rgba(0,250,255,0.08)] px-4 py-1 text-sm font-medium text-[var(--pa-cyan)]">
               <Shield className="h-4 w-4" />
               Zero-Data Compliance Suite
             </p>
-            <h1 className="mt-6 text-4xl font-bold text-slate-900">
+            <h1 className="mt-6 text-4xl font-bold text-[var(--pa-foreground)]">
               Zwei Tools. Sofort Klarheit zu DSGVO & EU AI Act.
             </h1>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-[var(--pa-muted)]">
               Wähle den passenden Checker: Ampel für Datenschutz-Use-Cases oder
               Kompetenztest für KI-Regulatorik. Beide laufen 100% im Browser.
             </p>
           </div>
-          <div className="grid gap-4 rounded-2xl bg-slate-900/90 p-6 text-slate-100">
+          <div className="grid gap-4 rounded-2xl border border-white/10 bg-[#05090f]/80 p-6 text-[var(--pa-foreground)]">
             <div>
-              <p className="text-sm uppercase tracking-wide text-slate-300">
+              <p className="text-sm uppercase tracking-wide text-[var(--pa-muted)]">
                 Statusübersicht
               </p>
               <p className="text-3xl font-bold">Ampel-First</p>
             </div>
-            <ul className="space-y-2 text-sm text-slate-200">
+            <ul className="space-y-2 text-sm text-[var(--pa-muted)]">
               <li>✔ Keine Datenübertragung</li>
               <li>✔ Schritt-für-Schritt Guidance</li>
               <li>✔ Exportfähige Ergebnisse</li>
@@ -61,17 +61,14 @@ export default function HomePage() {
           <Link
             key={card.href}
             href={card.href}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-900/5 transition hover:-translate-y-1 hover:border-blue-400"
+            className="group pa-card"
           >
-            <div
-              className={`pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-gradient-to-br ${card.accent}`}
-            />
-            <card.icon className="relative h-10 w-10 text-blue-600" />
-            <h2 className="relative mt-4 text-2xl font-semibold text-slate-900">
+            <card.icon className="relative z-10 h-10 w-10 text-[var(--pa-cyan)]" />
+            <h2 className="pa-card-title relative z-10 mt-4 text-2xl font-semibold">
               {card.title}
             </h2>
-            <p className="relative mt-2 text-slate-600">{card.description}</p>
-            <span className="relative mt-6 inline-flex items-center text-sm font-semibold text-blue-600">
+            <p className="pa-card-text relative z-10 mt-2">{card.description}</p>
+            <span className="pa-card-link relative z-10 mt-6">
               Tool öffnen →
             </span>
           </Link>

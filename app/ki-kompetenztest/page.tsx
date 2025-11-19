@@ -448,10 +448,10 @@ const KIKompetenzTest = () => {
 
   const handleAnswer = (answerIndex) => {
     if (showExplanation) return;
-    
+
     setSelectedAnswer(answerIndex);
     setShowExplanation(true);
-    
+
     const isCorrect = answerIndex === questions[currentLevel][currentQuestion].correct;
     const newScores = [...levelScores[currentLevel], isCorrect];
     setLevelScores({ ...levelScores, [currentLevel]: newScores });
@@ -466,11 +466,11 @@ const KIKompetenzTest = () => {
       const score = levelScores[currentLevel].filter(s => s).length;
       const total = questions[currentLevel].length;
       const percentage = (score / total) * 100;
-      
+
       if (percentage >= 70 && !completedLevels.includes(currentLevel)) {
         setCompletedLevels([...completedLevels, currentLevel]);
       }
-      
+
       setView('levelComplete');
     }
   };
@@ -510,7 +510,7 @@ const KIKompetenzTest = () => {
   // Learning Area View
   if (view === 'learn') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -530,7 +530,7 @@ const KIKompetenzTest = () => {
               <Brain className="w-8 h-8" />
               {learningContent.euAiAct.title}
             </h2>
-            
+
             {learningContent.euAiAct.sections.map((section, idx) => (
               <div key={idx} className="mb-6 last:mb-0">
                 <h3 className="text-xl font-bold text-white mb-4">{section.title}</h3>
@@ -561,7 +561,7 @@ const KIKompetenzTest = () => {
               <AlertCircle className="w-8 h-8" />
               {learningContent.biasTypes.title}
             </h2>
-            
+
             <div className="space-y-4">
               {learningContent.biasTypes.sections[0].content.map((item, i) => (
                 <div key={i} className="bg-slate-700/50 rounded-lg p-5">
@@ -579,7 +579,7 @@ const KIKompetenzTest = () => {
               <Target className="w-8 h-8" />
               {learningContent.responsibilities.title}
             </h2>
-            
+
             <div className="space-y-4">
               {learningContent.responsibilities.sections[0].content.map((item, i) => (
                 <div key={i} className="bg-slate-700/50 rounded-lg p-5">
@@ -596,7 +596,7 @@ const KIKompetenzTest = () => {
               <BookOpen className="w-8 h-8" />
               {learningContent.resources.title}
             </h2>
-            
+
             <div className="space-y-3">
               {learningContent.resources.links.map((link, i) => (
                 <a
@@ -628,9 +628,9 @@ const KIKompetenzTest = () => {
   if (view === 'levelComplete') {
     const levelScore = getLevelScore(currentLevel);
     const passed = levelScore && levelScore.percentage >= 70;
-    
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
             {passed ? (
@@ -638,22 +638,22 @@ const KIKompetenzTest = () => {
             ) : (
               <Award className="w-24 h-24 text-slate-400 mx-auto mb-6" />
             )}
-            
+
             <h2 className="text-4xl font-bold mb-3 text-slate-800">
               {passed ? "Level geschafft! 🎉" : "Noch nicht ganz..."}
             </h2>
-            
-            <div 
-              className="text-7xl font-bold mb-6" 
+
+            <div
+              className="text-7xl font-bold mb-6"
               style={{ color: passed ? '#10b981' : '#f59e0b' }}
             >
               {levelScore.percentage}%
             </div>
-            
+
             <p className="text-xl text-slate-600 mb-8">
               {levelScore.correct} von {levelScore.total} Fragen richtig
             </p>
-            
+
             {passed ? (
               <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-5 mb-8">
                 <p className="text-emerald-900 font-medium text-lg">
@@ -668,7 +668,7 @@ const KIKompetenzTest = () => {
                 </p>
               </div>
             )}
-            
+
             <div className="flex flex-wrap gap-4 justify-center">
               <button
                 onClick={restartLevel}
@@ -676,7 +676,7 @@ const KIKompetenzTest = () => {
               >
                 Level wiederholen
               </button>
-              
+
               {passed && currentLevel < 3 && isLevelUnlocked(currentLevel + 1) && (
                 <button
                   onClick={() => startLevel(currentLevel + 1)}
@@ -685,7 +685,7 @@ const KIKompetenzTest = () => {
                   Nächstes Level →
                 </button>
               )}
-              
+
               <button
                 onClick={goToMenu}
                 className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-semibold shadow-lg"
@@ -702,7 +702,7 @@ const KIKompetenzTest = () => {
   // Menu View
   if (view === 'menu') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
@@ -733,13 +733,13 @@ const KIKompetenzTest = () => {
               const completed = completedLevels.includes(level);
               const score = getLevelScore(level);
               const Icon = levelInfo[level].icon;
-              
+
               return (
                 <div
                   key={level}
                   className={`bg-slate-800 rounded-2xl shadow-2xl p-6 border-2 transition-all ${
-                    unlocked 
-                      ? 'border-slate-600 cursor-pointer hover:border-slate-400 hover:shadow-emerald-500/20' 
+                    unlocked
+                      ? 'border-slate-600 cursor-pointer hover:border-slate-400 hover:shadow-emerald-500/20'
                       : 'border-slate-700 opacity-60'
                   }`}
                   onClick={() => unlocked && startLevel(level)}
@@ -752,7 +752,7 @@ const KIKompetenzTest = () => {
                         <Lock className="w-10 h-10 text-white" />
                       )}
                     </div>
-                    
+
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold mb-2 text-white">{levelInfo[level].title}</h3>
                       <p className="text-slate-300 mb-2">{levelInfo[level].description}</p>
@@ -760,7 +760,7 @@ const KIKompetenzTest = () => {
                         {questions[level].length} Fragen
                       </p>
                     </div>
-                    
+
                     <div className="text-right min-w-[120px]">
                       {completed && (
                         <div className="flex items-center gap-2 text-emerald-400 mb-2 justify-end">
@@ -769,8 +769,8 @@ const KIKompetenzTest = () => {
                         </div>
                       )}
                       {score && (
-                        <div className="text-3xl font-bold" style={{ 
-                          color: score.percentage >= 70 ? '#10b981' : '#f59e0b' 
+                        <div className="text-3xl font-bold" style={{
+                          color: score.percentage >= 70 ? '#10b981' : '#f59e0b'
                         }}>
                           {score.percentage}%
                         </div>
@@ -818,7 +818,7 @@ const KIKompetenzTest = () => {
   const LevelIcon = levelInfo[currentLevel].icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen bg-[var(--pa-bg)] p-6">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between bg-slate-800 rounded-xl p-4 shadow-lg">
@@ -840,7 +840,7 @@ const KIKompetenzTest = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="text-right">
             <div className="text-sm text-slate-400">Richtig</div>
             <div className="font-bold text-2xl text-emerald-400">
@@ -873,11 +873,11 @@ const KIKompetenzTest = () => {
               const isSelected = selectedAnswer === index;
               const isCorrect = index === currentQ.correct;
               const showResult = showExplanation;
-              
+
               let bgColor = 'bg-slate-700 hover:bg-slate-600';
               let borderColor = 'border-slate-600';
               let textColor = 'text-slate-200';
-              
+
               if (showResult) {
                 if (isCorrect) {
                   bgColor = 'bg-emerald-900/50';
@@ -893,7 +893,7 @@ const KIKompetenzTest = () => {
                 borderColor = 'border-blue-500';
                 textColor = 'text-blue-100';
               }
-              
+
               return (
                 <button
                   key={index}
@@ -923,8 +923,8 @@ const KIKompetenzTest = () => {
           {showExplanation && (
             <div className="mt-8 space-y-5 animate-fadeIn">
               <div className={`p-6 rounded-xl border-2 ${
-                selectedAnswer === currentQ.correct 
-                  ? 'bg-emerald-900/30 border-emerald-500' 
+                selectedAnswer === currentQ.correct
+                  ? 'bg-emerald-900/30 border-emerald-500'
                   : 'bg-amber-900/30 border-amber-500'
               }`}>
                 <div className="flex items-start gap-4">

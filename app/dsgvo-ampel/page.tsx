@@ -923,7 +923,7 @@ const DSGVOAmpelFormular = () => {
     const todos = getTopTodos();
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+      <div className="min-h-screen bg-[var(--pa-bg)] p-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-2xl p-8">
             <div className="text-center mb-8">
@@ -934,7 +934,7 @@ const DSGVOAmpelFormular = () => {
             </div>
 
             {/* Gesamt-Status */}
-            <div className="mb-8 p-6 bg-slate-50 rounded-xl border-2 border-slate-200">
+            <div className="mb-8 pa-card">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-slate-900 mb-2">
@@ -968,10 +968,7 @@ const DSGVOAmpelFormular = () => {
                 { key: "gobd", label: "GoBD (Aufbewahrung)" },
                 { key: "mitarbeiter", label: "Mitarbeiter-Dokumentation" },
               ].map(({ key, label }) => (
-                <div
-                  key={key}
-                  className="p-4 bg-white border border-slate-200 rounded-lg"
-                >
+                <div key={key} className="p-4 pa-card">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       {getStatusIcon(ampel[key].status)}
@@ -1003,7 +1000,7 @@ const DSGVOAmpelFormular = () => {
 
             {/* Top-Todos */}
             {todos.length > 0 && (
-              <div className="mb-8 p-6 bg-blue-50 rounded-xl border-2 border-blue-200">
+              <div className="mb-8 pa-card">
                 <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
                   <FileText className="w-6 h-6 text-blue-600" />
                   Prioritäre Handlungsempfehlungen
@@ -1070,7 +1067,7 @@ const DSGVOAmpelFormular = () => {
             </div>
 
             {/* Upsell */}
-            <div className="mt-8 p-6 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl border-2 border-cyan-200">
+            <div className="mt-8 pa-card">
               <h3 className="text-lg font-bold text-slate-900 mb-2">
                 Vollständige Compliance-Analyse gewünscht?
               </h3>
@@ -1115,7 +1112,7 @@ const DSGVOAmpelFormular = () => {
   const currentValue = formData[currentQuestion.id];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+    <div className="min-h-screen bg-[var(--pa-bg)] p-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 pt-8">
