@@ -705,7 +705,7 @@ const KIKompetenzTest = () => {
       <div className="min-h-screen bg-[var(--pa-bg)] p-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-400 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold mb-3 text-[var(--pa-foreground)]">
               KI-Kompetenztest
             </h1>
             <p className="text-slate-300 text-lg">EU AI Act Edition - Spielerisch lernen, sicher anwenden</p>
@@ -715,14 +715,12 @@ const KIKompetenzTest = () => {
           <div className="mb-8">
             <button
               onClick={() => setView('learn')}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-2xl p-6 hover:from-blue-700 hover:to-cyan-700 transition shadow-2xl"
+              className="w-full pa-card flex items-center justify-center gap-4"
             >
-              <div className="flex items-center justify-center gap-4">
-                <BookOpen className="w-8 h-8" />
-                <div className="text-left">
-                  <div className="text-2xl font-bold">Wissensbereich</div>
-                  <div className="text-blue-100">Gesammeltes Wissen, Bias-Typen & weiterführende Links</div>
-                </div>
+              <BookOpen className="w-8 h-8 text-[var(--accent-cyan)]" />
+              <div className="text-left">
+                <div className="text-2xl font-bold text-[var(--pa-foreground)]">Wissensbereich</div>
+                <div className="text-slate-300">Gesammeltes Wissen, Bias-Typen & weiterführende Links</div>
               </div>
             </button>
           </div>

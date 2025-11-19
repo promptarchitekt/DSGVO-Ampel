@@ -1050,7 +1050,7 @@ const DSGVOAmpelFormular = () => {
             <div className="flex gap-4">
               <button
                 onClick={() => window.print()}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                className="pa-btn pa-btn-primary flex-1"
               >
                 <Download className="w-5 h-5" />
                 PDF-Report herunterladen
@@ -1060,7 +1060,7 @@ const DSGVOAmpelFormular = () => {
                   setShowResults(false);
                   setCurrentStep(0);
                 }}
-                className="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className="pa-btn pa-btn-secondary flex-1"
               >
                 Neu starten
               </button>
@@ -1156,9 +1156,9 @@ const DSGVOAmpelFormular = () => {
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-slate-800 rounded-full h-2">
             <div
-              className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-300"
+              className="bg-[var(--accent-cyan)] h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -1279,7 +1279,7 @@ const DSGVOAmpelFormular = () => {
           <button
             onClick={handleBack}
             disabled={currentStep === 0}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="pa-btn pa-btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" />
             Zurück
@@ -1288,7 +1288,7 @@ const DSGVOAmpelFormular = () => {
           <button
             onClick={handleNext}
             disabled={!currentValue}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
+            className="pa-btn pa-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {currentStep === filteredQuestions.length - 1
               ? "Ergebnis anzeigen"

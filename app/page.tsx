@@ -69,7 +69,7 @@ export default function HomePage() {
             </h2>
             <p className="pa-card-text relative z-10 mt-2">{card.description}</p>
             <span className="pa-card-link relative z-10 mt-6">
-              Tool öffnen →
+              Tool öffnen
             </span>
           </Link>
         ))}

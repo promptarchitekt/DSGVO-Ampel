@@ -333,3 +333,44 @@ select option {
 .pa-card-link:hover {
   color: var(--accent-gold);
 }
+
+/* Shared button style (Portal-like, no gradient) */
+.pa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-out;
+}
+
+.pa-btn-primary {
+  background: var(--accent-cyan);
+  color: #02080c;
+  border-color: rgba(0, 250, 255, 0.7);
+}
+
+.pa-btn-primary:hover {
+  background: var(--accent-gold);
+  border-color: rgba(255, 195, 0, 0.8);
+}
+
+.pa-btn-secondary {
+  background: transparent;
+  color: var(--pa-foreground);
+  border-color: rgba(148, 163, 184, 0.6);
+}
+
+.pa-btn-secondary:hover {
+  border-color: var(--accent-cyan);
+}
+
+.pa-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
