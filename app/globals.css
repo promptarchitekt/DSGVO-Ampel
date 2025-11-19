@@ -15,7 +15,7 @@
   --pa-cyan-soft: #7dfcff;
   --pa-gold: #ffc300;
   --pa-green: #10b981;
-  --pa-amber: #f59e0b;
+  --pa-amber: #ffc300;
   --pa-red: #dc2626;
   /* CI tokens / aliases (shared) */
   --background: var(--pa-bg);
