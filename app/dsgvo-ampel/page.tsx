@@ -1165,14 +1165,14 @@ const DSGVOAmpelFormular = () => {
         </div>
 
         {/* Question Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+        <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 mb-6 border border-slate-700">
           {/* Category Badge */}
-          <div className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+          <div className="inline-flex items-center gap-2 bg-[rgba(0,250,255,0.08)] text-[var(--accent-cyan)] px-3 py-1 rounded-full text-sm font-semibold mb-4 border border-[var(--accent-cyan)]/40">
             {currentQuestion.category}
           </div>
 
           {/* Question Title */}
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">
+          <h2 className="text-2xl font-bold text-[var(--pa-foreground)] mb-6">
             {guidedMode
               ? currentQuestion.guidedTitle || currentQuestion.title
               : currentQuestion.expertTitle || currentQuestion.title}
