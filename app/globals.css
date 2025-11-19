@@ -17,7 +17,10 @@
   --pa-green: #10b981;
   --pa-amber: #f59e0b;
   --pa-red: #dc2626;
-  /* aliases to match Portal styles */
+  /* CI tokens / aliases (shared) */
+  --background: var(--pa-bg);
+  --surface: var(--pa-surface);
+  --surface-elevated: var(--pa-card);
   --accent-cyan: var(--pa-cyan);
   --accent-gold: var(--pa-gold);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -27,7 +30,7 @@
 body {
   min-height: 100vh;
   background: radial-gradient(circle at top, rgba(0, 250, 255, 0.12), transparent 45%),
-    var(--pa-bg);
+    var(--background);
   color: var(--pa-foreground);
 }
 
