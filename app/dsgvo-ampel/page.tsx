@@ -1066,42 +1066,6 @@ const DSGVOAmpelFormular = () => {
               </button>
             </div>
 
-            {/* Upsell */}
-            <div className="mt-8 pa-card">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Vollständige Compliance-Analyse gewünscht?
-              </h3>
-              <p className="text-slate-700 mb-4">
-                Erhalten Sie Rechtsgrundlagen-Dokumente, prüffähiges VVT,
-                DSFA-Vorprüfung und 30-Tage-Maßnahmenplan.
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white p-4 rounded-lg">
-                  <p className="text-sm text-slate-600 mb-1">Starter</p>
-                  <p className="text-2xl font-bold text-slate-900 mb-2">
-                    €2.900
-                  </p>
-                  <a
-                    href="https://promptarchitekt.de/starter"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Jetzt buchen →
-                  </a>
-                </div>
-                <div className="bg-white p-4 rounded-lg">
-                  <p className="text-sm text-slate-600 mb-1">Pro</p>
-                  <p className="text-2xl font-bold text-slate-900 mb-2">
-                    €8.900
-                  </p>
-                  <a
-                    href="https://promptarchitekt.de/pro"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Jetzt buchen →
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -1110,6 +1074,10 @@ const DSGVOAmpelFormular = () => {
 
   const currentQuestion = filteredQuestions[currentStep];
   const currentValue = formData[currentQuestion.id];
+  const isOptionalQuestion =
+    currentQuestion.id === "name" ||
+    currentQuestion.id === "email" ||
+    currentQuestion.id === "firma";
 
   return (
     <div className="min-h-screen bg-[var(--pa-bg)] p-4">
@@ -1291,7 +1259,7 @@ const DSGVOAmpelFormular = () => {
 
           <button
             onClick={handleNext}
-            disabled={!currentValue}
+            disabled={!currentValue && !isOptionalQuestion}
             className="pa-btn pa-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {currentStep === filteredQuestions.length - 1
