@@ -772,7 +772,7 @@ const KIKompetenzTest = () => {
             })}
           </div>
 
-          <div className="pa-card">
+          <div className="mt-6 pa-card">
             <button
               type="button"
               onClick={() => setShowHowItWorks((v) => !v)}
