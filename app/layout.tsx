@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { TopNav } from "../components/TopNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,20 +33,7 @@ export default function RootLayout({
               <Link href="/" className="font-semibold text-lg text-[var(--pa-foreground)]">
                 Compliance Studio
               </Link>
-              <nav className="flex gap-4 text-sm font-medium text-[var(--pa-muted)]">
-                <Link
-                  className="transition-colors hover:text-[var(--pa-cyan)]"
-                  href="/dsgvo-ampel"
-                >
-                  DSGVO Ampel
-                </Link>
-                <Link
-                  className="transition-colors hover:text-[var(--pa-cyan)]"
-                  href="/ki-kompetenztest"
-                >
-                  KI Kompetenztest
-                </Link>
-              </nav>
+              <TopNav />
             </div>
           </header>
           <main className="flex-1">{children}</main>

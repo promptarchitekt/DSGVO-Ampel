@@ -11,6 +11,7 @@ const KIKompetenzTest = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [levelScores, setLevelScores] = useState({ 1: [], 2: [], 3: [] });
   const [completedLevels, setCompletedLevels] = useState([]);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   const questions = {
     1: [
@@ -711,7 +712,7 @@ const KIKompetenzTest = () => {
             <p className="text-slate-300 text-lg">EU AI Act Edition - Spielerisch lernen, sicher anwenden</p>
           </div>
 
-          <div className="grid gap-6">
+          <div className="space-y-6">
             {[1, 2, 3].map(level => {
               const unlocked = isLevelUnlocked(level);
               const completed = completedLevels.includes(level);
@@ -771,26 +772,39 @@ const KIKompetenzTest = () => {
             })}
           </div>
 
-          <div className="bg-slate-800 border-2 border-blue-500/30 rounded-2xl p-6 shadow-xl">
-            <h3 className="font-bold text-blue-300 mb-3 text-xl">💡 So funktioniert’s:</h3>
-            <ul className="text-slate-300 space-y-3">
-              <li className="flex items-start gap-3">
-                <span className="text-emerald-400 text-xl">✓</span>
-                <span>Single-Choice Fragen - nur EINE Antwort ist korrekt</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-emerald-400 text-xl">✓</span>
-                <span>Sofortige, verständliche Erklärungen nach jeder Antwort</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-emerald-400 text-xl">✓</span>
-                <span>Mindestens 70% richtig → Nächstes Level freischalten</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-emerald-400 text-xl">✓</span>
-                <span>Wissensbereich mit allen Infos zum Nachschlagen</span>
-              </li>
-            </ul>
+          <div className="pa-card">
+            <button
+              type="button"
+              onClick={() => setShowHowItWorks((v) => !v)}
+              className="flex w-full items-center justify-between text-left"
+            >
+              <span className="font-semibold text-[var(--accent-cyan)]">
+                💡 So funktioniert’s
+              </span>
+              <span className="text-slate-400 text-sm">
+                {showHowItWorks ? "Details ausblenden" : "Details anzeigen"}
+              </span>
+            </button>
+            {showHowItWorks && (
+              <ul className="mt-4 text-slate-300 space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-400 text-xl">✓</span>
+                  <span>Single-Choice Fragen – nur EINE Antwort ist korrekt</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-400 text-xl">✓</span>
+                  <span>Sofortige, verständliche Erklärungen nach jeder Antwort</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-400 text-xl">✓</span>
+                  <span>Mindestens 70% richtig → nächstes Level freischalten</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-emerald-400 text-xl">✓</span>
+                  <span>Wissensbereich mit allen Infos zum Nachschlagen</span>
+                </li>
+              </ul>
+            )}
           </div>
         </div>
       </div>
