@@ -706,10 +706,14 @@ const KIKompetenzTest = () => {
       <div className="min-h-screen bg-[var(--pa-bg)] p-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
+            <p className="text-xs tracking-[0.25em] uppercase text-slate-400 mb-3">
+              Lernen
+            </p>
             <h1 className="text-5xl font-bold mb-3 text-[var(--pa-foreground)]">
-              KI-Kompetenztest
+              KI-Kompetenztest&nbsp;
+              <span className="text-[var(--accent-cyan)]">EU AI Act</span>
             </h1>
-            <p className="text-slate-300 text-lg">EU AI Act Edition - Spielerisch lernen, sicher anwenden</p>
+            <p className="text-slate-300 text-lg">Spielerisch lernen, sicher anwenden</p>
           </div>
 
           <div className="space-y-6">

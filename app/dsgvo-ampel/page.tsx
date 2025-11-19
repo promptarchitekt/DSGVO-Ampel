@@ -1116,8 +1116,12 @@ const DSGVOAmpelFormular = () => {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 pt-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            DSGVO-Compliance Quickcheck
+          <p className="text-xs tracking-[0.25em] uppercase text-slate-400 mb-3">
+            Datenschutz
+          </p>
+          <h1 className="text-5xl font-bold text-white mb-2">
+            DSGVO&nbsp;
+            <span className="text-[var(--accent-cyan)]">Compliance Quickcheck</span>
           </h1>
           <p className="text-slate-300 mb-4">Kontext.KI × PromptArchitekt</p>
 

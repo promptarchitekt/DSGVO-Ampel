@@ -31,7 +31,7 @@ export default function RootLayout({
           <header className="border-b border-white/10 bg-[#0B1219]/90 backdrop-blur">
             <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
               <Link href="/" className="font-semibold text-lg text-[var(--pa-foreground)]">
-                Compliance Studio
+                DSGVO & KI-Compliance
               </Link>
               <TopNav />
             </div>
