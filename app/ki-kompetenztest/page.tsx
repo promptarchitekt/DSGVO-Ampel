@@ -680,7 +680,7 @@ const KIKompetenzTest = () => {
               {passed && currentLevel < 3 && isLevelUnlocked(currentLevel + 1) && (
                 <button
                   onClick={() => startLevel(currentLevel + 1)}
-                  className={`px-8 py-4 bg-gradient-to-r ${levelInfo[currentLevel + 1].gradient} text-white rounded-xl hover:shadow-xl transition font-semibold shadow-lg`}
+                  className="pa-btn pa-btn-primary"
                 >
                   Nächstes Level →
                 </button>
@@ -688,7 +688,7 @@ const KIKompetenzTest = () => {
 
               <button
                 onClick={goToMenu}
-                className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-semibold shadow-lg"
+                className="pa-btn pa-btn-secondary"
               >
                 Zur Übersicht
               </button>
@@ -711,21 +711,7 @@ const KIKompetenzTest = () => {
             <p className="text-slate-300 text-lg">EU AI Act Edition - Spielerisch lernen, sicher anwenden</p>
           </div>
 
-          {/* Wissensbereich Button */}
-          <div className="mb-8">
-            <button
-              onClick={() => setView('learn')}
-              className="w-full pa-card flex items-center justify-center gap-4"
-            >
-              <BookOpen className="w-8 h-8 text-[var(--accent-cyan)]" />
-              <div className="text-left">
-                <div className="text-2xl font-bold text-[var(--pa-foreground)]">Wissensbereich</div>
-                <div className="text-slate-300">Gesammeltes Wissen, Bias-Typen & weiterführende Links</div>
-              </div>
-            </button>
-          </div>
-
-          <div className="grid gap-6 mb-8">
+          <div className="grid gap-6">
             {[1, 2, 3].map(level => {
               const unlocked = isLevelUnlocked(level);
               const completed = completedLevels.includes(level);
@@ -743,11 +729,11 @@ const KIKompetenzTest = () => {
                   onClick={() => unlocked && startLevel(level)}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`bg-gradient-to-br ${levelInfo[level].gradient} p-5 rounded-xl shadow-lg`}>
+                    <div className="w-14 h-14 rounded-xl border border-[var(--accent-cyan)] flex items-center justify-center bg-[rgba(0,250,255,0.08)]">
                       {unlocked ? (
-                        <Icon className="w-10 h-10 text-white" />
+                        <Icon className="w-8 h-8 text-[var(--accent-cyan)]" />
                       ) : (
-                        <Lock className="w-10 h-10 text-white" />
+                        <Lock className="w-8 h-8 text-[var(--accent-cyan)]" />
                       )}
                     </div>
 

@@ -1275,7 +1275,7 @@ const DSGVOAmpelFormular = () => {
         </div>
 
         {/* Navigation */}
-        <div className="flex gap-4">
+        <div className="flex items-center justify-between gap-4">
           <button
             onClick={handleBack}
             disabled={currentStep === 0}
