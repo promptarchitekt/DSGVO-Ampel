@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "vercel-build": "npx vercel build",
-    "vercel-deploy": "npx vercel deploy --prebuilt --prod"
+    "lint": "next lint"
   },
   "dependencies": {
     "lucide-react": "^0.462.0",
