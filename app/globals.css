@@ -144,11 +144,7 @@ select option {
 
 .bg-gradient-to-br,
 .bg-gradient-to-r {
-  background-image: linear-gradient(
-    135deg,
-    rgba(0, 250, 255, 0.15),
-    rgba(255, 195, 0, 0.15)
-  ) !important;
+  background-image: none !important;
 }
 
 .text-slate-900,

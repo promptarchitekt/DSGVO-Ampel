@@ -778,8 +778,9 @@ const KIKompetenzTest = () => {
               onClick={() => setShowHowItWorks((v) => !v)}
               className="flex w-full items-center justify-between text-left"
             >
-              <span className="font-semibold text-[var(--accent-cyan)]">
-                💡 So funktioniert’s
+              <span className="flex items-center gap-2 font-semibold text-[var(--accent-cyan)]">
+                <Zap className="w-4 h-4" />
+                So funktioniert’s
               </span>
               <span className="text-slate-400 text-sm">
                 {showHowItWorks ? "Details ausblenden" : "Details anzeigen"}
@@ -817,19 +818,19 @@ const KIKompetenzTest = () => {
 
   return (
     <div className="min-h-screen bg-[var(--pa-bg)] p-6">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between bg-slate-800 rounded-xl p-4 shadow-lg">
-          <div className="flex items-center gap-3">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between bg-slate-800 rounded-xl p-4 shadow-lg">
+            <div className="flex items-center gap-3">
             <button
               onClick={goToMenu}
               className="p-2 hover:bg-slate-700 rounded-lg transition"
               title="Zurück zur Übersicht"
-            >
-              <Home className="w-5 h-5 text-slate-300" />
-            </button>
-            <div className={`bg-gradient-to-br ${levelInfo[currentLevel].gradient} p-3 rounded-lg shadow-md`}>
-              <LevelIcon className="w-7 h-7 text-white" />
+              >
+                <Home className="w-5 h-5 text-slate-300" />
+              </button>
+            <div className="w-10 h-10 rounded-lg border border-[var(--accent-cyan)] flex items-center justify-center bg-[rgba(0,250,255,0.08)]">
+              <LevelIcon className="w-6 h-6 text-[var(--accent-cyan)]" />
             </div>
             <div>
               <h2 className="font-bold text-lg text-white">{levelInfo[currentLevel].title}</h2>
@@ -848,9 +849,9 @@ const KIKompetenzTest = () => {
         </div>
 
         {/* Progress bar */}
-        <div className="mb-6 bg-slate-700 rounded-full h-3 shadow-inner">
+        <div className="mb-6 bg-slate-800 rounded-full h-3 shadow-inner">
           <div
-            className={`bg-gradient-to-r ${levelInfo[currentLevel].gradient} h-3 rounded-full transition-all shadow-lg`}
+            className="bg-[var(--accent-cyan)] h-3 rounded-full transition-all shadow-lg"
             style={{ width: `${((currentQuestion + 1) / questions[currentLevel].length) * 100}%` }}
           />
         </div>
