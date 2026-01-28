@@ -511,19 +511,20 @@ const KIKompetenzTest = () => {
   // Learning Area View
   if (view === 'learn') {
     return (
-      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={goToMenu}
-                className="p-2 hover:bg-slate-700 rounded-lg transition"
-              >
-                <Home className="w-6 h-6 text-slate-300" />
-              </button>
-              <h1 className="text-3xl font-bold text-white">Wissensbereich</h1>
+      <div className="h-full flex items-center justify-center p-4 overflow-y-auto">
+        <div className="w-full max-w-5xl">
+          <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-700 mb-6">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={goToMenu}
+                  className="p-2 hover:bg-slate-700 rounded-lg transition"
+                >
+                  <Home className="w-6 h-6 text-slate-300" />
+                </button>
+                <h2 className="text-2xl font-bold text-white">Wissensbereich</h2>
+              </div>
             </div>
-          </div>
 
           {/* EU AI Act */}
           <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 mb-6 border border-slate-700">
@@ -620,6 +621,7 @@ const KIKompetenzTest = () => {
               ))}
             </div>
           </div>
+          </div>
         </div>
       </div>
     );
@@ -631,8 +633,8 @@ const KIKompetenzTest = () => {
     const passed = levelScore && levelScore.percentage >= 70;
 
     return (
-      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
-        <div className="max-w-2xl mx-auto">
+      <div className="h-full flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl">
           <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
             {passed ? (
               <Trophy className="w-24 h-24 text-amber-500 mx-auto mb-6 animate-bounce" />
@@ -703,80 +705,82 @@ const KIKompetenzTest = () => {
   // Menu View
   if (view === 'menu') {
     return (
-      <div className="min-h-screen bg-[var(--pa-bg)] p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <p className="text-xs tracking-[0.25em] uppercase text-slate-400 mb-3">
-              Lernen
-            </p>
-            <h1 className="text-5xl font-bold mb-3 text-[var(--pa-foreground)]">
-              KI-Kompetenztest&nbsp;
-              <span className="text-[var(--accent-cyan)]">EU AI Act</span>
-            </h1>
-            <p className="text-slate-300 text-lg">Spielerisch lernen, sicher anwenden</p>
-          </div>
+      <div className="h-full flex items-center justify-center p-4 overflow-y-auto">
+        <div className="w-full max-w-5xl">
+          <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border border-slate-700 mb-6">
+            {/* Menü-Überschrift - H2 für Fragebogen-Standard */}
+            <div className="text-center mb-8">
+              <p className="text-xs tracking-[0.25em] uppercase text-slate-400 mb-3">
+                Lernen
+              </p>
+              <h2 className="text-3xl font-bold mb-3 text-[var(--pa-foreground)]">
+                KI-Kompetenztest&nbsp;
+                <span className="text-[var(--accent-cyan)]">EU AI Act</span>
+              </h2>
+              <p className="text-slate-300">Spielerisch lernen, sicher anwenden</p>
+            </div>
 
-          <div className="space-y-6">
-            {[1, 2, 3].map(level => {
-              const unlocked = isLevelUnlocked(level);
-              const completed = completedLevels.includes(level);
-              const score = getLevelScore(level);
-              const Icon = levelInfo[level].icon;
+            <div className="space-y-6">
+              {[1, 2, 3].map(level => {
+                const unlocked = isLevelUnlocked(level);
+                const completed = completedLevels.includes(level);
+                const score = getLevelScore(level);
+                const Icon = levelInfo[level].icon;
 
-              return (
-                <div
-                  key={level}
-                  className={`bg-slate-800 rounded-2xl shadow-2xl p-6 border-2 transition-all ${
-                    unlocked
-                      ? 'border-slate-600 cursor-pointer hover:border-slate-400 hover:shadow-emerald-500/20'
-                      : 'border-slate-700 opacity-60'
-                  }`}
-                  onClick={() => unlocked && startLevel(level)}
-                >
-                  <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-xl border border-[var(--accent-cyan)] flex items-center justify-center bg-[rgba(0,250,255,0.08)]">
-                      {unlocked ? (
-                        <Icon className="w-8 h-8 text-[var(--accent-cyan)]" />
-                      ) : (
-                        <Lock className="w-8 h-8 text-[var(--accent-cyan)]" />
-                      )}
-                    </div>
+                return (
+                  <div
+                    key={level}
+                    className={`bg-slate-700/50 rounded-2xl shadow-xl p-6 border-2 transition-all ${
+                      unlocked
+                        ? 'border-slate-600 cursor-pointer hover:border-slate-400 hover:shadow-emerald-500/20'
+                        : 'border-slate-700 opacity-60'
+                    }`}
+                    onClick={() => unlocked && startLevel(level)}
+                  >
+                    <div className="flex items-center gap-5">
+                      <div className="w-14 h-14 rounded-xl border border-[var(--accent-cyan)] flex items-center justify-center bg-[rgba(0,250,255,0.08)]">
+                        {unlocked ? (
+                          <Icon className="w-8 h-8 text-[var(--accent-cyan)]" />
+                        ) : (
+                          <Lock className="w-8 h-8 text-[var(--accent-cyan)]" />
+                        )}
+                      </div>
 
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold mb-2 text-white">{levelInfo[level].title}</h3>
-                      <p className="text-slate-300 mb-2">{levelInfo[level].description}</p>
-                      <p className="text-slate-400 text-sm">
-                        {questions[level].length} Fragen
-                      </p>
-                    </div>
+                      <div className="flex-1">
+                        <h3 className="text-2xl font-bold mb-2 text-white">{levelInfo[level].title}</h3>
+                        <p className="text-slate-300 mb-2">{levelInfo[level].description}</p>
+                        <p className="text-slate-400 text-sm">
+                          {questions[level].length} Fragen
+                        </p>
+                      </div>
 
-                    <div className="text-right min-w-[120px]">
-                      {completed && (
-                        <div className="flex items-center gap-2 text-emerald-400 mb-2 justify-end">
-                          <CheckCircle className="w-6 h-6" />
-                          <span className="font-semibold text-lg">Geschafft!</span>
-                        </div>
-                      )}
-                      {score && (
-                        <div className="text-3xl font-bold" style={{
-                          color: score.percentage >= 70 ? '#10b981' : '#f59e0b'
-                        }}>
-                          {score.percentage}%
-                        </div>
-                      )}
-                      {!unlocked && (
-                        <div className="text-slate-500 text-sm">
-                          Vorheriges Level abschließen
-                        </div>
-                      )}
+                      <div className="text-right min-w-[120px]">
+                        {completed && (
+                          <div className="flex items-center gap-2 text-emerald-400 mb-2 justify-end">
+                            <CheckCircle className="w-6 h-6" />
+                            <span className="font-semibold text-lg">Geschafft!</span>
+                          </div>
+                        )}
+                        {score && (
+                          <div className="text-3xl font-bold" style={{
+                            color: score.percentage >= 70 ? '#10b981' : '#f59e0b'
+                          }}>
+                            {score.percentage}%
+                          </div>
+                        )}
+                        {!unlocked && (
+                          <div className="text-slate-500 text-sm">
+                            Vorheriges Level abschließen
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          <div className="mt-6 pa-card">
+            <div className="mt-6 pa-card">
             <button
               type="button"
               onClick={() => setShowHowItWorks((v) => !v)}
@@ -810,6 +814,7 @@ const KIKompetenzTest = () => {
                 </li>
               </ul>
             )}
+            </div>
           </div>
         </div>
       </div>
@@ -821,8 +826,8 @@ const KIKompetenzTest = () => {
   const LevelIcon = levelInfo[currentLevel].icon;
 
   return (
-    <div className="min-h-screen bg-[var(--pa-bg)] p-6">
-        <div className="max-w-3xl mx-auto">
+    <div className="h-full flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between bg-slate-800 rounded-xl p-4 shadow-lg">
             <div className="flex items-center gap-3">

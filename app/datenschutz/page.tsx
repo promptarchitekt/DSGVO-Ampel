@@ -13,19 +13,21 @@ export default function DatenschutzPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 space-y-8">
-      <header className="space-y-3">
-        <p className="text-sm font-semibold uppercase text-slate-500">
-          Datenschutz
-        </p>
-        <h1 className="text-4xl font-bold text-slate-900">Datenschutzerklärung</h1>
-        <p className="text-slate-600">
-          Sie werden zur offiziellen Datenschutzerklärung von PROMPT ARCHITEKT auf{" "}
-          <span className="font-semibold">promptarchitekt.de</span> weitergeleitet.
-        </p>
-      </header>
+    <div className="h-full flex items-center justify-center p-4">
+      <div className="w-full max-w-5xl">
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <header className="space-y-3 mb-6">
+            <p className="text-sm font-semibold uppercase text-slate-500">
+              Datenschutz
+            </p>
+            <h2 className="text-2xl font-bold text-slate-900">Datenschutzerklärung</h2>
+            <p className="text-slate-600">
+              Sie werden zur offiziellen Datenschutzerklärung von PROMPT ARCHITEKT auf{" "}
+              <span className="font-semibold">promptarchitekt.de</span> weitergeleitet.
+            </p>
+          </header>
 
-      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <section className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-6">
         <p className="text-slate-600">
           Falls die automatische Weiterleitung nicht funktioniert, nutzen Sie bitte
           diesen Link zur aktuellen Datenschutzerklärung:
@@ -39,6 +41,8 @@ export default function DatenschutzPage() {
           {DATENSCHUTZ_URL}
         </Link>
       </section>
+        </div>
+      </div>
     </div>
   );
 }

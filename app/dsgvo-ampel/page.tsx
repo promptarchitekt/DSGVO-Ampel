@@ -13,8 +13,10 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import jsPDF from 'jspdf';
 
 const DSGVOAmpelFormular = () => {
+  const [modeSelected, setModeSelected] = useState<boolean | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
@@ -914,20 +916,174 @@ const DSGVOAmpelFormular = () => {
     }
   };
 
+  const generatePDF = () => {
+    const ampel = calculateAmpel();
+    const todos = getTopTodos();
+    const doc = new jsPDF();
+    let yPos = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+
+    // Header
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('DSGVO Compliance QuickCheck', margin, yPos);
+    yPos += 10;
+    
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'normal');
+    const dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    doc.text(`Erstellt am: ${dateStr}`, margin, yPos);
+    yPos += 8;
+    
+    if (formData.name || formData.firma) {
+      doc.setFontSize(10);
+      doc.text(`Für: ${formData.firma || formData.name || 'Nicht angegeben'}`, margin, yPos);
+      yPos += 6;
+    }
+    yPos += 5;
+
+    // Executive Summary
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Executive Summary', margin, yPos);
+    yPos += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const gesamtStatusText = 
+      ampel.gesamt === "green" ? "Vollständig compliant" :
+      ampel.gesamt === "yellow" ? "Teilweise compliant - Nachbesserung nötig" :
+      "Kritische Lücken - sofortige Maßnahmen erforderlich";
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { gesamt: _gesamt, ...ampelBereiche } = ampel;
+    type AmpelBereich = { status: string; issues: string[]; details: string[] };
+    const redCount = Object.values(ampelBereiche).filter((r: AmpelBereich) => r.status === "red").length;
+    const yellowCount = Object.values(ampelBereiche).filter((r: AmpelBereich) => r.status === "yellow").length;
+    
+    const summaryLines = doc.splitTextToSize(
+      `${gesamtStatusText}. ${redCount > 0 ? `${redCount} kritische Bereiche` : ''} ${yellowCount > 0 ? `${yellowCount} Bereiche mit Handlungsbedarf` : ''}. ${todos.length > 0 ? `Top-Priorität: ${todos[0].title}` : 'Alle Bereiche sind compliant.'}`,
+      maxWidth
+    );
+    doc.text(summaryLines, margin, yPos);
+    yPos += summaryLines.length * 5 + 5;
+
+    // Ampel-Übersicht
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Compliance-Status nach Bereichen', margin, yPos);
+    yPos += 8;
+
+    const bereiche = [
+      { key: "dsgvo", label: "DSGVO" },
+      { key: "euKiAkt", label: "EU-KI-Akt" },
+      { key: "bfsg", label: "BFSG (Barrierefreiheit)" },
+      { key: "nis2", label: "NIS2 (Meldepflichten)" },
+      { key: "gobd", label: "GoBD (Aufbewahrung)" },
+      { key: "mitarbeiter", label: "Mitarbeiter-Dokumentation" },
+    ];
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    
+    bereiche.forEach(({ key, label }) => {
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      const status = ampel[key].status;
+      const statusSymbol = status === "green" ? "✓" : status === "yellow" ? "⚠" : "✗";
+      const statusText = status === "green" ? "Grün" : status === "yellow" ? "Gelb" : "Rot";
+      
+      doc.text(`${statusSymbol} ${label}: ${statusText}`, margin, yPos);
+      yPos += 5;
+      
+      if (ampel[key].issues.length > 0) {
+        ampel[key].issues.forEach((issue) => {
+          const issueLines = doc.splitTextToSize(`  • ${issue}`, maxWidth - 10);
+          doc.text(issueLines, margin + 5, yPos);
+          yPos += issueLines.length * 4;
+        });
+        yPos += 2;
+      }
+    });
+
+    // Top-Todos
+    if (todos.length > 0) {
+      if (yPos > 220) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      yPos += 5;
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Prioritäre Handlungsempfehlungen', margin, yPos);
+      yPos += 8;
+
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      
+      todos.forEach((todo, index) => {
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 20;
+        }
+        
+        doc.setFont(undefined, 'bold');
+        doc.text(`${index + 1}. ${todo.title}`, margin, yPos);
+        yPos += 5;
+        
+        doc.setFont(undefined, 'normal');
+        const descLines = doc.splitTextToSize(todo.description, maxWidth);
+        doc.text(descLines, margin + 5, yPos);
+        yPos += descLines.length * 4;
+        
+        doc.setFontSize(9);
+        doc.text(`Deadline: ${todo.deadline}`, margin + 5, yPos);
+        yPos += 6;
+      });
+    }
+
+    // Footer
+    const totalPages = doc.internal.pages.length - 1;
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setFont(undefined, 'italic');
+      doc.text(
+        'Dieser Quickcheck dient als erste Einschätzung. Keine Rechtsberatung.',
+        margin,
+        doc.internal.pageSize.getHeight() - 10
+      );
+      doc.text(
+        `Seite ${i} von ${totalPages}`,
+        pageWidth - margin - 20,
+        doc.internal.pageSize.getHeight() - 10
+      );
+    }
+
+    // Download
+    const fileName = `DSGVO-Compliance-Report-${dateStr.replace(/\./g, '-')}.pdf`;
+    doc.save(fileName);
+  };
+
   if (showResults) {
     const ampel = calculateAmpel();
     const todos = getTopTodos();
 
     return (
-      <div className="min-h-screen bg-[var(--pa-bg)] p-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="h-full flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl">
           <div className="bg-white rounded-2xl shadow-2xl p-8">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                Ihr Compliance-Status
-              </h1>
-              <p className="text-slate-600">Basierend auf Ihren Angaben</p>
-            </div>
+            {/* Ergebnis-Überschrift - H2 für Fragebogen-Standard */}
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              Ihr Compliance-Status
+            </h2>
+            <p className="text-slate-600 mb-6">Basierend auf Ihren Angaben</p>
 
             {/* Gesamt-Status */}
             <div className="mb-8 pa-card">
@@ -1045,7 +1201,7 @@ const DSGVOAmpelFormular = () => {
             {/* Actions */}
             <div className="flex gap-4">
               <button
-                onClick={() => window.print()}
+                onClick={generatePDF}
                 className="pa-btn pa-btn-primary flex-1"
               >
                 <Download className="w-5 h-5" />
@@ -1068,6 +1224,132 @@ const DSGVOAmpelFormular = () => {
     );
   }
 
+  // Mode Selection Screen
+  if (modeSelected === null) {
+    return (
+      <div className="h-full flex items-center justify-center p-4 overflow-y-auto">
+        <div className="w-full max-w-6xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-[var(--pa-foreground)] mb-3">
+              Wählen Sie Ihren Modus
+            </h2>
+            <p className="text-[var(--pa-muted)]">
+              Beide Modi führen zum gleichen Ergebnis – wählen Sie die passende Sprache für Sie
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Geführter Modus */}
+            <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border-2 border-slate-700 hover:border-[var(--accent-cyan)] transition-all cursor-pointer"
+              onClick={() => {
+                setGuidedMode(true);
+                setModeSelected(true);
+              }}>
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[rgba(0,250,255,0.1)] border border-[var(--accent-cyan)] mb-4">
+                  <HelpCircle className="w-8 h-8 text-[var(--accent-cyan)]" />
+                </div>
+                <h3 className="text-2xl font-bold text-[var(--pa-foreground)] mb-2">
+                  Geführter Modus
+                </h3>
+                <p className="text-[var(--pa-muted)]">
+                  Für Einsteiger und alle, die Klartext bevorzugen
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Fragen in Alltagssprache</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Ausführliche Erklärungen mit Beispielen</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Kontextuelle Warnungen und Tipps</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Keine juristischen Fachbegriffe nötig</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Ideal für erste Compliance-Prüfung</span>
+                </li>
+              </ul>
+
+              <div className="pt-6 border-t border-slate-700">
+                <div className="text-sm text-[var(--pa-muted)] mb-4">
+                  Beispiel-Frage:
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 text-sm text-[var(--pa-foreground)] italic">
+                  &ldquo;Dokumentieren Sie systematisch, welche Kundendaten Sie erheben, wo Sie diese speichern und wofür Sie diese nutzen?&rdquo;
+                </div>
+              </div>
+            </div>
+
+            {/* Experten-Modus */}
+            <div className="bg-slate-800 rounded-2xl shadow-2xl p-8 border-2 border-slate-700 hover:border-[var(--accent-cyan)] transition-all cursor-pointer"
+              onClick={() => {
+                setGuidedMode(false);
+                setModeSelected(true);
+              }}>
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[rgba(0,250,255,0.1)] border border-[var(--accent-cyan)] mb-4">
+                  <FileText className="w-8 h-8 text-[var(--accent-cyan)]" />
+                </div>
+                <h3 className="text-2xl font-bold text-[var(--pa-foreground)] mb-2">
+                  Experten-Modus
+                </h3>
+                <p className="text-[var(--pa-muted)]">
+                  Für Datenschutz-Experten und Juristen
+                </p>
+              </div>
+
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Fragen mit direkten Normbezügen</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Knappe, präzise Formulierungen</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Juristische Fachbegriffe (Art. 30 DSGVO, etc.)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Weniger Erklärungen, mehr Effizienz</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--pa-green)] flex-shrink-0 mt-0.5" />
+                  <span className="text-[var(--pa-foreground)]">Ideal für wiederholte Prüfungen</span>
+                </li>
+              </ul>
+
+              <div className="pt-6 border-t border-slate-700">
+                <div className="text-sm text-[var(--pa-muted)] mb-4">
+                  Beispiel-Frage:
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4 text-sm text-[var(--pa-foreground)] italic">
+                  &ldquo;Haben Sie ein vollständiges Verzeichnis der Verarbeitungstätigkeiten gemäß Art. 30 DSGVO?&rdquo;
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center text-sm text-[var(--pa-muted)]">
+            <p>💡 Beide Modi führen zum identischen Ergebnis – die Auswahl betrifft nur die Darstellung</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const currentQuestion = filteredQuestions[currentStep];
   const currentValue = formData[currentQuestion.id];
   const isOptionalQuestion =
@@ -1076,45 +1358,8 @@ const DSGVOAmpelFormular = () => {
     currentQuestion.id === "firma";
 
   return (
-    <div className="min-h-screen bg-[var(--pa-bg)] p-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8 pt-8">
-          <p className="text-xs tracking-[0.25em] uppercase text-slate-400 mb-3">
-            Datenschutz
-          </p>
-          <h1 className="text-5xl font-bold text-white mb-2">
-            DSGVO&nbsp;
-            <span className="text-[var(--accent-cyan)]">Compliance Quickcheck</span>
-          </h1>
-          <p className="text-slate-300 mb-4">Kontext.KI × PromptArchitekt</p>
-
-          {/* Mode Toggle */}
-          {currentStep === 0 && (
-            <div className="inline-flex bg-slate-700 rounded-lg p-1">
-              <button
-                onClick={() => setGuidedMode(true)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  guidedMode
-                    ? "bg-cyan-500 text-white"
-                    : "text-slate-300 hover:text-white"
-                }`}
-              >
-                Geführter Modus
-              </button>
-              <button
-                onClick={() => setGuidedMode(false)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  !guidedMode
-                    ? "bg-cyan-500 text-white"
-                    : "text-slate-300 hover:text-white"
-                }`}
-              >
-                Experten-Modus
-              </button>
-            </div>
-          )}
-        </div>
+    <div className="h-full flex items-center justify-center p-4">
+      <div className="w-full max-w-5xl">
 
         {/* Progress Bar */}
         <div className="mb-8">
@@ -1139,7 +1384,7 @@ const DSGVOAmpelFormular = () => {
             {currentQuestion.category}
           </div>
 
-          {/* Question Title */}
+          {/* Question Title - H2 für Fragebogen-Standard */}
           <h2 className="text-2xl font-bold text-[var(--pa-foreground)] mb-6">
             {guidedMode
               ? currentQuestion.guidedTitle || currentQuestion.title
@@ -1265,13 +1510,6 @@ const DSGVOAmpelFormular = () => {
           </button>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-slate-400 text-sm">
-          <p>
-            Dieser Quickcheck dient als erste Einschätzung. Keine
-            Rechtsberatung.
-          </p>
-        </div>
       </div>
     </div>
   );

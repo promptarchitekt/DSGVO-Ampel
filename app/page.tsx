@@ -24,7 +24,7 @@ const cards = [
 
 export default function HomePage() {
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12 text-[var(--pa-foreground)]">
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-10 px-6 py-8 text-[var(--pa-foreground)]">
       <section className="rounded-3xl border border-white/10 bg-[var(--pa-surface)]/80 p-10 shadow-[0_35px_120px_rgba(0,0,0,0.55)]">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
