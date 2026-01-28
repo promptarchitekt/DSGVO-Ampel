@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "docStandard": true,
+    "links": true,
+    "datumQuelle": false,
+    "gesetzeslageAbgleich": false
+  },
+  "norms": ["DSGVO", "KI-VO", "NIS2"],
+  "output": {
+    "reportDir": "audit-docs/validations"
+  }
+}
+

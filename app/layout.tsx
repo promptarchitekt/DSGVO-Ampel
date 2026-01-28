@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "DSGVO Ampel & KI Kompetenztest",
   description:
     "Guided compliance tools for DSGVO readiness and AI Act skill checks.",
-  metadataBase: new URL("https://example.com"),
+  metadataBase: new URL("https://dsgvo-ampel.promptarchitekt.de"),
   openGraph: {
     title: "DSGVO Ampel & KI Kompetenztest",
     description:

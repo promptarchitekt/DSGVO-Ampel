@@ -178,10 +178,6 @@ const DSGVOAmpelFormular = () => {
             url: "https://www.ldi.nrw.de/datenschutz/verwaltung/verarbeitungsverzeichnis-nach-artikel-30-ds-gvo",
           },
           {
-            text: "Video-Anleitung: VVT in 10 Minuten",
-            url: "https://www.youtube.com/watch?v=example",
-          },
-          {
             text: "Kostenlose Excel-Vorlage",
             url: "https://emodeon.de/kostenlose-vorlage-fuer-das-verzeichnis-von-verarbeitungstaetigkeiten-vvt/",
           },
