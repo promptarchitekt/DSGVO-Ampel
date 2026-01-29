@@ -1,1578 +1,234 @@
-'use client';
+"use client";
 
-import {
-  AlertCircle,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  ExternalLink,
-  FileText,
-  XCircle,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import jsPDF from "jspdf";
+import { useState, useEffect, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-const DSGVOAmpelFormular = () => {
+// Data & Types
+import { questions } from "./data/questions";
+import { calculateAmpel, getTopTodos } from "./utils/ampelLogic";
+import { generatePDF } from "./utils/pdfGenerator";
+import { AmpelResult, Todo } from "./types";
+
+// Components
+import { QuestionCard } from "./components/QuestionCard";
+import { EmailGate } from "./components/EmailGate";
+import { ResultsPage } from "./components/ResultsPage";
+
+export default function DsgvoAmpel() {
+  // State
   const [currentStep, setCurrentStep] = useState(0);
-  const [showResults, setShowResults] = useState(false);
+  const [formData, setFormData] = useState<any>({});
   const [showEmailGate, setShowEmailGate] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState({
-    mitarbeiterAnzahl: null,
-    useCase: "",
-    vvt: null,
-    dsfa: null,
-    avv: null,
-    kiRisikoklasse: null,
-    kiKompetenz: null,
-    bfsg: null,
-    bfsgDigitalProdukt: null,
-    nis2: null,
-    gobd: null,
-    mitarbeiterDatenschutz: null,
-    mitarbeiterBetriebsvereinbarung: null,
-    mitarbeiterKiSchulung: null,
-    mitarbeiterNutzungsrichtlinie: null,
-    name: "",
-    email: "",
-    firma: "",
-  });
   const [emailFormData, setEmailFormData] = useState({
     email: "",
     companyName: "",
     agreeToPrivacy: false,
   });
 
+  // Filter questions based on conditions
+  const filteredQuestions = questions.filter((q) => {
+    if (!q.condition) return true;
+    return q.condition(formData);
+  });
 
-  // Zentrale Fragen-Definition (SSOT) – eine einheitliche Formulierung für alle
-  const questions = [
-    {
-      id: "mitarbeiterAnzahl",
-      category: "Unternehmen",
-      title: "Wie viele Mitarbeiter beschäftigt Ihr Unternehmen?",
-      type: "select",
-      options: [
-        { value: "<10", label: "Weniger als 10 Mitarbeiter" },
-        { value: "10-49", label: "10-49 Mitarbeiter" },
-        { value: "50-249", label: "50-249 Mitarbeiter" },
-        { value: "250+", label: "250 oder mehr Mitarbeiter" },
-      ],
-      helpText:
-        "Diese Information hilft uns, gesetzliche Ausnahmeregelungen zu prüfen.",
-      infoCard: {
-        title: "Warum fragen wir das?",
-        content:
-          "Unternehmen mit weniger als 250 Mitarbeitern haben bei bestimmten Pflichten Ausnahmen. ABER: Diese Ausnahmen gelten NICHT bei digitalen Produkten oder regelmäßiger Datenverarbeitung!",
-        links: [
-          {
-            text: "Artikel 30 Abs. 5 DSGVO",
-            url: "https://www.datenschutz-grundverordnung.eu/grundverordnung/art-30-ds-gvo/",
-          },
-        ],
-      },
-    },
-    {
-      id: "useCase",
-      category: "Anwendungsfall",
-      title: "Welcher Anwendungsfall beschreibt Ihre Situation am besten?",
-      type: "select",
-      options: [
-        {
-          value: "ki_system",
-          label: "KI-System im Unternehmen (z.B. ChatGPT, Copilot)",
-        },
-        {
-          value: "verwaltung",
-          label: "Digitale Verwaltungsleistung (z.B. Portal, Chatbot)",
-        },
-        { value: "ecommerce", label: "E-Commerce / Online-Shop" },
-        { value: "intern", label: "Interne Prozesse" },
-        { value: "sonstiges", label: "Sonstiges" },
-      ],
-      helpText:
-        "Diese Auswahl passt die folgenden Fragen optimal an Ihre Situation an.",
-    },
-    {
-      id: "vvt",
-      category: "DSGVO - Dokumentation",
-      title:
-        "Dokumentieren Sie systematisch, welche personenbezogenen Daten Sie verarbeiten, wo Sie diese speichern und wofür Sie diese nutzen (Verzeichnis der Verarbeitungstätigkeiten nach Art. 30 DSGVO)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, vollständig dokumentiert",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "teilweise",
-          label: "Teilweise, noch Lücken vorhanden",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, noch nicht systematisch",
-          icon: XCircle,
-          color: "text-red-600",
-        },
-      ],
-      helpText:
-        "Beispiele: Liste aller Systeme (CRM, E-Mail, Cloud), welche Daten dort gespeichert werden, wie lange Sie diese aufbewahren.",
-      rechtsgrundlage: "Art. 30 DSGVO",
-      infoCard: {
-        title: "📋 Was ist ein Verzeichnis der Verarbeitungstätigkeiten (VVT)?",
-        content:
-          "Ein VVT ist eine Übersicht ALLER Prozesse, bei denen personenbezogene Daten verarbeitet werden. Beispiele: Kundenverwaltung, E-Mail-Marketing, Bewerbermanagement, Gehaltsabrechnung. Für jeden Prozess müssen Sie dokumentieren: WELCHE Daten, WOZU, WO gespeichert, WIE LANGE aufbewahrt.",
-        links: [
-          {
-            text: "Offizielle VVT-Mustervorlage (LDI NRW)",
-            url: "https://www.ldi.nrw.de/datenschutz/verwaltung/verarbeitungsverzeichnis-nach-artikel-30-ds-gvo",
-          },
-          {
-            text: "Kostenlose Excel-Vorlage",
-            url: "https://emodeon.de/kostenlose-vorlage-fuer-das-verzeichnis-von-verarbeitungstaetigkeiten-vvt/",
-          },
-        ],
-      },
-    },
-    {
-      id: "dsfa",
-      category: "DSGVO - Risikobewertung",
-      title:
-        "Nutzen Sie KI oder andere Systeme, die automatisch Entscheidungen über Personen treffen (z.B. Kreditvergabe, Bewerbungsauswahl)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, DSFA wurde durchgeführt",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, aber geplant",
-          icon: XCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nicht_erforderlich",
-          label: "Nicht erforderlich (kein Hochrisiko)",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "weiss_nicht",
-          label: "Weiß nicht / unsicher",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-      ],
-      helpText:
-        "DSFA ist erforderlich bei: KI-Systemen mit personenbezogenen Daten, Videoüberwachung, Profiling, Gesundheitsdaten, großflächiger Datenerhebung.",
-      rechtsgrundlage: "Art. 35 DSGVO",
-      warning:
-        "⚠️ Bei KI-Systemen mit personenbezogenen Daten ist eine DSFA fast immer erforderlich!",
-      infoCard: {
-        title: "🔍 Was ist eine Datenschutz-Folgenabschätzung (DSFA)?",
-        content:
-          "Eine DSFA prüft, ob eine Datenverarbeitung ein hohes Risiko für Personen darstellt. Sie ist Pflicht bei: Automatisierten Entscheidungen (KI), Profiling, Videoüberwachung, Verarbeitung besonderer Datenkategorien (Gesundheit, Religion, etc.). Die DSFA beschreibt: Zweck, Risiken, Schutzmaßnahmen.",
-        links: [
-          {
-            text: "DSFA-Prüfliste (LDI NRW)",
-            url: "https://www.ldi.nrw.de/datenschutz/datenschutz-folgenabschaetzung",
-          },
-          {
-            text: "Standard-Datenschutzmodell (SDM)",
-            url: "https://www.datenschutzzentrum.de/sdm/",
-          },
-        ],
-      },
-    },
-    {
-      id: "avv",
-      category: "DSGVO - Auftragsverarbeitung",
-      title:
-        "Nutzen Sie externe Dienstleister für Cloud-Speicherung, E-Mail-Versand oder Webhosting? Falls ja: Haben Sie mit ALLEN einen Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO abgeschlossen?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, mit allen Dienstleistern",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "teilweise",
-          label: "Teilweise, nicht mit allen",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, noch keine Verträge",
-          icon: XCircle,
-          color: "text-red-600",
-        },
-        {
-          value: "keine_dienstleister",
-          label: "Keine externen Dienstleister",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-      ],
-      helpText:
-        "Beispiele: Google Workspace, Microsoft 365, IONOS, AWS, Mailchimp, Zoom, Stripe.",
-      rechtsgrundlage: "Art. 28 DSGVO",
-      infoCard: {
-        title: "📄 Was ist ein Auftragsverarbeitungsvertrag (AVV)?",
-        content:
-          "Ein AVV regelt, wie externe Dienstleister mit Ihren Kundendaten umgehen müssen. Pflicht bei ALLEN Dienstleistern, die Zugriff auf personenbezogene Daten haben! Beispiele: Cloud-Provider (Google, Microsoft, AWS), E-Mail-Dienste (Mailchimp), Zahlungsdienstleister (Stripe, PayPal), Webhosting (IONOS, Hetzner).",
-        links: [
-          {
-            text: "AVV-Mustervertrag (Bitkom)",
-            url: "https://www.bitkom.org/Themen/Datenschutz-Sicherheit/Datenschutz/Auftragsverarbeitung.html",
-          },
-          {
-            text: "Checkliste: AVV-Pflicht prüfen",
-            url: "https://www.datenschutz.org/auftragsverarbeitung/",
-          },
-        ],
-      },
-    },
-    {
-      id: "kiTyp",
-      category: "EU-KI-Akt",
-      title: "Welche Art von KI-System nutzen Sie?",
-      type: "select",
-      options: [
-        { value: "keine", label: "Keine KI-Systeme" },
-        {
-          value: "chatgpt",
-          label: "ChatGPT / Copilot / Claude (Standard-Tools)",
-        },
-        {
-          value: "intern_lowrisk",
-          label: "Interne KI für einfache Aufgaben (z.B. Textgenerierung)",
-        },
-        {
-          value: "personalwesen",
-          label: "KI im Personalwesen (Bewerbungsauswahl, Leistungsbewertung)",
-        },
-        {
-          value: "kundenbewertung",
-          label: "KI für Kundenbewertung (Kreditscoring, Risikobewertung)",
-        },
-        {
-          value: "kritische_infrastruktur",
-          label:
-            "KI in kritischer Infrastruktur (Gesundheit, Energie, Verkehr)",
-        },
-        { value: "eigene_modelle", label: "Eigene KI-Modelle entwickelt" },
-      ],
-      helpText:
-        "Dies hilft uns, die richtige Risikokategorie und Schulungspflicht zu bestimmen.",
-      condition: (data) =>
-        data.useCase === "ki_system" || data.useCase === "intern",
-      infoCard: {
-        title: "🤖 KI-Risikokategorien im EU-KI-Akt",
-        content:
-          "Minimales Risiko: ChatGPT, Copilot (Transparenzpflicht). Hochrisiko: KI im Personalwesen, Kreditscoring, Gesundheitswesen, Strafverfolgung. Verboten: Social Scoring, biometrische Echtzeit-Überwachung.",
-        links: [
-          {
-            text: "KI-Risikokategorien (Bundesnetzagentur)",
-            url: "https://www.bundesnetzagentur.de/DE/Beschlusskammern/Beschlusskammer1/KI/start.html",
-          },
-          {
-            text: "EU AI Act Volltext",
-            url: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32024R1689",
-          },
-        ],
-      },
-    },
-    {
-      id: "kiKompetenz",
-      category: "EU-KI-Akt - Schulung",
-      title:
-        "Wurden alle Mitarbeiter, die mit KI arbeiten, geschult (technisch, rechtlich, ethisch)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, alle geschult",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "teilweise",
-          label: "Teilweise, läuft noch",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, noch nicht",
-          icon: XCircle,
-          color: "text-red-600",
-        },
-      ],
-      helpText:
-        "Schulung muss technische, rechtliche UND ethische Aspekte abdecken. Jährliche Auffrischung erforderlich!",
-      rechtsgrundlage: "EU-KI-Akt (EU 2024/1689), Art. 4",
-      deadline: "02.02.2025",
-      condition: (data) =>
-        data.useCase === "ki_system" || data.useCase === "intern",
-      infoCard: {
-        title: "🎓 KI-Kompetenz-Schulung ab 02.02.2025 PFLICHT!",
-        content:
-          "Ab 2. Februar 2025 müssen ALLE Mitarbeiter, die mit KI arbeiten, geschult sein. Inhalte: Technisch (Funktionsweise, Grenzen), Rechtlich (DSGVO, EU-KI-Akt), Ethisch (Bias, Diskriminierung). Umfang richtet sich nach Risiko: ChatGPT-Nutzer → Basis-Schulung (2-4h), Entwickler/Hochrisiko → Intensive Schulung (2-3 Tage).",
-        links: [
-          {
-            text: "KI-Kompetenz Leitfaden (Bundesnetzagentur)",
-            url: "https://www.bundesnetzagentur.de/DE/Beschlusskammern/Beschlusskammer1/KI/KI-Kompetenz.html",
-          },
-          {
-            text: "Kostenlose KI-Schulung (IHK)",
-            url: "https://www.ihk.de/rhein-neckar/ausbildung-weiterbildung/weiterbildung-channel/eu-ai-act-artikel-4-6434562",
-          },
-        ],
-      },
-    },
-    {
-      id: "bfsgDigitalProdukt",
-      category: "BFSG",
-      title:
-        "Bieten Sie digitale Produkte oder Dienstleistungen an (Software, Apps, Webshops)?",
-      type: "radio",
-      options: [
-        { value: "ja", label: "Ja", icon: CheckCircle, color: "text-blue-600" },
-        { value: "nein", label: "Nein", icon: XCircle, color: "text-gray-600" },
-      ],
-      helpText:
-        "Wichtig: Die Kleinstunternehmen-Ausnahme gilt NICHT für digitale Produkte!",
-      warning:
-        "⚠️ BFSG-Ausnahme gilt NICHT für Software/Apps - auch Kleinstunternehmen sind betroffen!",
-      infoCard: {
-        title: "♿ BFSG: Barrierefreiheit für digitale Produkte",
-        content:
-          "BFSG gilt ab 28.06.2025 für ALLE digitalen Produkte - unabhängig von Unternehmensgröße! Betroffen: Software, Apps, Webshops, E-Books, Online-Banking. Nicht betroffen: Reine Informationswebsites von Kleinstunternehmen.",
-        links: [
-          {
-            text: "BFSG-Infos (IHK)",
-            url: "https://www.ihk.de/rhein-neckar/recht/barrierefreiheitsstaerkungsgesetz-bfsg-5209948",
-          },
-          {
-            text: "WCAG 2.2 Checkliste",
-            url: "https://www.w3.org/WAI/WCAG22/quickref/",
-          },
-        ],
-      },
-    },
-    {
-      id: "bfsg",
-      category: "BFSG - Barrierefreiheit",
-      title:
-        "Ist Ihre Software/App/Website für Menschen mit Behinderungen nutzbar (z.B. Tastatur-Navigation, Screen-Reader-kompatibel)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, WCAG 2.2 AA erfüllt",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "teilweise",
-          label: "Teilweise, in Arbeit",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, noch nicht",
-          icon: XCircle,
-          color: "text-red-600",
-        },
-        {
-          value: "weiss_nicht",
-          label: "Weiß nicht / nicht geprüft",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-      ],
-      helpText:
-        "Beispiele: Kontrastverhältnisse, Tastatur-Navigation, Alt-Texte für Bilder, Untertitel für Videos.",
-      rechtsgrundlage: "BFSG, WCAG 2.2 AA",
-      deadline: "28.06.2025",
-      condition: (data) => data.bfsgDigitalProdukt === "ja",
-      infoCard: {
-        title: "📱 WCAG 2.2 AA - Was bedeutet das?",
-        content:
-          "WCAG = Web Content Accessibility Guidelines. Level AA = Standard für Barrierefreiheit. Hauptkriterien: Wahrnehmbar (Kontrast min. 4,5:1, Alt-Texte), Bedienbar (Tastatur-Navigation), Verständlich (klare Sprache), Robust (funktioniert mit Hilfstechnologien).",
-        links: [
-          {
-            text: "WCAG 2.2 Quick Reference",
-            url: "https://www.w3.org/WAI/WCAG22/quickref/",
-          },
-          { text: "Kostenloser WCAG-Test", url: "https://wave.webaim.org/" },
-        ],
-      },
-    },
-    {
-      id: "nis2",
-      category: "NIS2",
-      title:
-        "Sind Sie in kritischen Sektoren tätig (Energie, Gesundheit, Verkehr, Finanzwesen) oder wichtiges Unternehmen mit >50 MA und >10M€ Umsatz?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, NIS2-pflichtig",
-          icon: AlertCircle,
-          color: "text-red-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, nicht betroffen",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "weiss_nicht",
-          label: "Weiß nicht / unsicher",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-      ],
-      helpText:
-        "NIS2-Meldepflichten: 24h (Frühwarnung), 72h (Hauptmeldung), 30d (Abschlussmeldung).",
-      rechtsgrundlage: "NIS2 (EU 2022/2555)",
-      warning:
-        "Sanktionen: Bis 20 Mio € ODER 4% Jahresumsatz + persönliche Haftung der Geschäftsführung!",
-      infoCard: {
-        title: "🚨 NIS2: Neue Cybersicherheitspflichten",
-        content:
-          "NIS2 betrifft: Kritische Sektoren (Energie, Gesundheit, Verkehr, Wasser, Finanzwesen, digitale Infrastruktur) ODER wichtige Unternehmen (>50 MA, >10M€ Umsatz). Pflichten: 24h Frühwarnung, 72h Hauptmeldung, 30d Abschlussmeldung, Risikomanagement, Lieferkettenprüfung.",
-        links: [
-          {
-            text: "NIS2-Selbsttest (BSI)",
-            url: "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/NIS2/nis2_node.html",
-          },
-          {
-            text: "NIS2-Umsetzungsgesetz (Entwurf)",
-            url: "https://www.bmi.bund.de/DE/themen/it-und-digitalpolitik/nis2/nis2-node.html",
-          },
-        ],
-      },
-    },
-    {
-      id: "gobd",
-      category: "GoBD",
-      title:
-        "Archivieren Sie Rechnungen, Belege und steuerrelevante E-Mails ordnungsgemäß für 8 Jahre (digital oder Papier)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, GoBD-konform",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        {
-          value: "teilweise",
-          label: "Teilweise, noch Lücken",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-        {
-          value: "nein",
-          label: "Nein, nicht konform",
-          icon: XCircle,
-          color: "text-red-600",
-        },
-        {
-          value: "weiss_nicht",
-          label: "Weiß nicht / unsicher",
-          icon: AlertCircle,
-          color: "text-yellow-600",
-        },
-      ],
-      helpText:
-        "Ab 01.01.2025 gilt für Buchungsbelege eine Frist von 8 Jahren (vorher 10 Jahre).",
-      rechtsgrundlage: "GoBD (BMF 14.07.2025), HGB § 257, AO § 147",
-      warning: "Neue Regelung ab 2025: 8 Jahre (statt 10) für Buchungsbelege!",
-      infoCard: {
-        title: "📦 GoBD: Ordnungsgemäße Aufbewahrung",
-        content:
-          "GoBD = Grundsätze zur ordnungsmäßigen Führung und Aufbewahrung von Büchern. Ab 2025: 8 Jahre für Buchungsbelege (Rechnungen, Belege), 10 Jahre für Handelsbücher. Digital ODER Papier erlaubt. Wichtig: Unveränderbarkeit, Nachvollziehbarkeit, Verfügbarkeit!",
-        links: [
-          {
-            text: "GoBD-Checkliste (BMF)",
-            url: "https://www.bundesfinanzministerium.de/Content/DE/Downloads/BMF_Schreiben/Weitere_Steuerthemen/Abgabenordnung/2019-11-28-GoBD.html",
-          },
-          {
-            text: "E-Rechnung ab 2025 Pflicht",
-            url: "https://www.bundesfinanzministerium.de/Content/DE/Standardartikel/Themen/Steuern/e-rechnung.html",
-          },
-        ],
-      },
-    },
-    {
-      id: "mitarbeiterDatenschutz",
-      category: "Mitarbeiter",
-      title:
-        "Wurden Ihre Mitarbeiter über die Datenverarbeitung informiert (was wird wie verarbeitet, welche Rechte haben sie)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja, vorhanden",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        { value: "nein", label: "Nein", icon: XCircle, color: "text-red-600" },
-      ],
-      helpText:
-        "Mitarbeiter müssen VOR Nutzung informiert werden: Welche Daten, Zweck, Empfänger, Rechte.",
-      rechtsgrundlage: "Art. 13/14 DSGVO",
-    },
-    {
-      id: "mitarbeiterBetriebsvereinbarung",
-      category: "Mitarbeiter",
-      title: "Haben Sie eine Betriebsvereinbarung (bei Überwachungsbezug)?",
-      type: "radio",
-      options: [
-        {
-          value: "ja",
-          label: "Ja",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-        { value: "nein", label: "Nein", icon: XCircle, color: "text-red-600" },
-        {
-          value: "nicht_erforderlich",
-          label: "Nicht erforderlich",
-          icon: CheckCircle,
-          color: "text-green-600",
-        },
-      ],
-      helpText:
-        "Erforderlich bei: Logging, Monitoring, automatisierten Entscheidungen über Mitarbeiter.",
-      rechtsgrundlage: "BetrVG § 87 Abs. 1 Nr. 6",
-    },
-    {
-      id: "name",
-      category: "Kontakt",
-      title: "Ihr Name (optional)",
-      type: "text",
-      helpText: "Für einen personalisierten Report",
-    },
-    {
-      id: "email",
-      category: "Kontakt",
-      title: "Ihre E-Mail-Adresse (optional)",
-      type: "email",
-      helpText: "Für den Report-Download. Wird nicht gespeichert.",
-    },
-    {
-      id: "firma",
-      category: "Kontakt",
-      title: "Ihre Firma oder Organisation (optional)",
-      type: "text",
-      helpText: "Optional",
-    },
-  ];
-
-  const getFilteredQuestions = () => {
-    return questions.filter((q) => {
-      if (!q.condition) return true;
-      return q.condition(formData);
-    });
-  };
-
-  const filteredQuestions = getFilteredQuestions();
-  const progress = ((currentStep + 1) / filteredQuestions.length) * 100;
+  // Safety check: if currentStep exceeds filtered questions length (e.g. strict condition change)
+  useEffect(() => {
+    if (currentStep >= filteredQuestions.length && filteredQuestions.length > 0) {
+      setCurrentStep(filteredQuestions.length - 1);
+    }
+  }, [formData, currentStep, filteredQuestions.length]);
 
   const currentQuestion = filteredQuestions[currentStep];
-  const currentValue = currentQuestion ? formData[currentQuestion.id] : null;
-  const isOptionalQuestion =
-    currentQuestion &&
-    (currentQuestion.id === "name" ||
-      currentQuestion.id === "email" ||
-      currentQuestion.id === "firma");
+  const progress = ((currentStep + 1) / filteredQuestions.length) * 100;
 
-  const calculateAmpel = () => {
-    const results = {
-      dsgvo: { status: "green", issues: [], details: [] },
-      euKiAkt: { status: "green", issues: [], details: [] },
-      bfsg: { status: "green", issues: [], details: [] },
-      nis2: { status: "green", issues: [], details: [] },
-      gobd: { status: "green", issues: [], details: [] },
-      mitarbeiter: { status: "green", issues: [], details: [] },
-    };
+  // Handlers
+  const handleOptionSelect = (value: any) => {
+    if (!currentQuestion) return;
+    setFormData((prev: any) => ({ ...prev, [currentQuestion.id]: value }));
 
-    // DSGVO
-    if (formData.vvt === "nein") {
-      results.dsgvo.status = "red";
-      results.dsgvo.issues.push("VVT fehlt");
-      results.dsgvo.details.push(
-        "Verzeichnis der Verarbeitungstätigkeiten ist Pflicht für alle Unternehmen, die personenbezogene Daten verarbeiten."
-      );
-    } else if (formData.vvt === "teilweise") {
-      results.dsgvo.status = results.dsgvo.status === "red" ? "red" : "yellow";
-      results.dsgvo.issues.push("VVT unvollständig");
-      results.dsgvo.details.push(
-        "VVT muss ALLE Verarbeitungstätigkeiten dokumentieren. Lücken schließen!"
-      );
+    // Auto-advance for radio buttons (UX improvement)
+    if (currentQuestion.type === "radio") {
+      setTimeout(() => {
+         handleNext(); 
+      }, 250); // Short delay for visual feedback
     }
-
-    if (formData.avv === "nein" || formData.avv === "teilweise") {
-      results.dsgvo.status = results.dsgvo.status === "red" ? "red" : "yellow";
-      results.dsgvo.issues.push(
-        formData.avv === "nein" ? "AVV fehlt" : "AVV unvollständig"
-      );
-      results.dsgvo.details.push(
-        "Auftragsverarbeitungsverträge mit ALLEN externen Dienstleistern abschließen."
-      );
-    }
-
-    if (formData.dsfa === "nein" || formData.dsfa === "weiss_nicht") {
-      results.dsgvo.status = results.dsgvo.status === "red" ? "red" : "yellow";
-      results.dsgvo.issues.push("DSFA prüfen");
-      results.dsgvo.details.push(
-        "Bei KI-Systemen und automatisierten Entscheidungen ist eine DSFA oft erforderlich."
-      );
-    }
-
-    // EU-KI-Akt
-    if (formData.kiKompetenz === "nein") {
-      results.euKiAkt.status = "red";
-      results.euKiAkt.issues.push("KI-Schulung fehlt");
-      results.euKiAkt.details.push(
-        "Ab 02.02.2025 Pflicht: Alle Mitarbeiter, die mit KI arbeiten, müssen geschult sein!"
-      );
-    } else if (formData.kiKompetenz === "teilweise") {
-      results.euKiAkt.status = "yellow";
-      results.euKiAkt.issues.push("KI-Schulung unvollständig");
-      results.euKiAkt.details.push(
-        "Alle betroffenen Mitarbeiter schulen und jährlich auffrischen."
-      );
-    }
-
-    // BFSG
-    if (formData.bfsgDigitalProdukt === "ja") {
-      if (formData.bfsg === "nein") {
-        results.bfsg.status = "red";
-        results.bfsg.issues.push("Barrierefreiheit fehlt");
-        results.bfsg.details.push(
-          "WCAG 2.2 AA ist Pflicht für digitale Produkte - auch für Kleinstunternehmen!"
-        );
-      } else if (
-        formData.bfsg === "weiss_nicht" ||
-        formData.bfsg === "teilweise"
-      ) {
-        results.bfsg.status = "yellow";
-        results.bfsg.issues.push("Barrierefreiheit prüfen");
-        results.bfsg.details.push(
-          "WCAG 2.2 AA-Test durchführen und Lücken schließen bis 28.06.2025."
-        );
-      }
-    }
-
-    // NIS2
-    if (formData.nis2 === "weiss_nicht") {
-      results.nis2.status = "yellow";
-      results.nis2.issues.push("NIS2-Relevanz prüfen");
-      results.nis2.details.push(
-        "Prüfen Sie, ob Sie unter NIS2 fallen (kritische Sektoren, >50 MA, >10M€)."
-      );
-    } else if (formData.nis2 === "ja") {
-      results.nis2.status = "yellow";
-      results.nis2.issues.push("NIS2-Maßnahmen umsetzen");
-      results.nis2.details.push(
-        "Meldeprozesse (24h/72h/30d), Risikomanagement und Lieferkettenprüfung einrichten."
-      );
-    }
-
-    // GoBD
-    if (formData.gobd === "nein") {
-      results.gobd.status = "red";
-      results.gobd.issues.push("Aufbewahrung fehlt");
-      results.gobd.details.push(
-        "GoBD-konforme Archivierung (8 Jahre) ist Pflicht!"
-      );
-    } else if (
-      formData.gobd === "weiss_nicht" ||
-      formData.gobd === "teilweise"
-    ) {
-      results.gobd.status = "yellow";
-      results.gobd.issues.push("Aufbewahrung prüfen");
-      results.gobd.details.push(
-        "Prüfen Sie, ob alle Belege ordnungsgemäß archiviert werden (8 Jahre ab 2025)."
-      );
-    }
-
-    // Mitarbeiter
-    if (formData.mitarbeiterDatenschutz === "nein") {
-      results.mitarbeiter.status = "red";
-      results.mitarbeiter.issues.push("Datenschutz-Info fehlt");
-      results.mitarbeiter.details.push(
-        "Mitarbeiter müssen VOR Nutzung über Datenverarbeitung informiert werden."
-      );
-    }
-
-    // Gesamt-Status
-    const allStatuses = Object.values(results).map((r) => r.status);
-    const redCount = allStatuses.filter((s) => s === "red").length;
-    const yellowCount = allStatuses.filter((s) => s === "yellow").length;
-
-    let gesamtStatus = "green";
-    if (redCount >= 2) gesamtStatus = "red";
-    else if (redCount === 1 || yellowCount >= 1) gesamtStatus = "yellow";
-
-    return { ...results, gesamt: gesamtStatus };
-  };
-
-  const getTopTodos = () => {
-    const todos = [];
-
-    // DSGVO
-    if (formData.vvt === "nein") {
-      todos.push({
-        priority: "red",
-        title: "VVT erstellen (Art. 30 DSGVO)",
-        description: "Dokumentieren Sie ALLE Datenverarbeitungen systematisch",
-        deadline: "Sofort",
-        link: "https://www.ldi.nrw.de/datenschutz/verwaltung/verarbeitungsverzeichnis-nach-artikel-30-ds-gvo",
-      });
-    }
-    if (formData.avv !== "ja" && formData.avv !== "keine_dienstleister") {
-      todos.push({
-        priority: "red",
-        title: "AVV abschließen (Art. 28 DSGVO)",
-        description: "Verträge mit ALLEN externen Dienstleistern",
-        deadline: "Sofort",
-        link: "https://www.bitkom.org/Themen/Datenschutz-Sicherheit/Datenschutz/Auftragsverarbeitung.html",
-      });
-    }
-
-    // EU-KI-Akt
-    if (formData.kiKompetenz === "nein") {
-      todos.push({
-        priority: "red",
-        title: "KI-Kompetenz-Schulung durchführen (Art. 4 EU-KI-Akt)",
-        description: "Alle Mitarbeiter schulen: technisch, rechtlich, ethisch",
-        deadline: "Bis 02.02.2025",
-        link: "https://www.bundesnetzagentur.de/DE/Beschlusskammern/Beschlusskammer1/KI/KI-Kompetenz.html",
-      });
-    }
-
-    // BFSG
-    if (formData.bfsgDigitalProdukt === "ja" && formData.bfsg === "nein") {
-      todos.push({
-        priority: "red",
-        title: "WCAG 2.2 AA umsetzen (BFSG)",
-        description: "Barrierefreiheit für digitale Produkte ist Pflicht!",
-        deadline: "Bis 28.06.2025",
-        link: "https://www.w3.org/WAI/WCAG22/quickref/",
-      });
-    }
-
-    // Mitarbeiter
-    if (formData.mitarbeiterDatenschutz === "nein") {
-      todos.push({
-        priority: "red",
-        title: "Datenschutzerklärung für Mitarbeiter (Art. 13/14 DSGVO)",
-        description: "Mitarbeiter VOR Nutzung informieren",
-        deadline: "Sofort",
-        link: "https://www.datenschutz.org/informationspflichten-mitarbeiter/",
-      });
-    }
-
-    // Sortiere nach Priorität
-    return todos
-      .sort((a, b) => {
-        const priorityOrder = { red: 0, yellow: 1, green: 2 };
-        return priorityOrder[a.priority] - priorityOrder[b.priority];
-      })
-      .slice(0, 5);
   };
 
   const handleNext = () => {
     if (currentStep < filteredQuestions.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
-      // Nach letzter Frage: E-Mail-Gate anzeigen
       setShowEmailGate(true);
     }
   };
 
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleChange = (value) => {
-    const q = filteredQuestions[currentStep];
-    if (!q) return;
-    setFormData({ ...formData, [q.id]: value });
-  };
-
-  // E-Mail Gate Handlers
-  const handleEmailSubmit = async () => {
-    if (!emailFormData.email || !emailFormData.agreeToPrivacy) {
-      alert("Bitte geben Sie Ihre E-Mail-Adresse ein und akzeptieren Sie die Datenschutzerklärung.");
-      return;
-    }
-
-    setEmailCaptured(true);
-    setIsGeneratingPDF(true);
-    
-    try {
-      // TODO: Implement actual email sending with PDF
-      // await sendEmailWithPDF(emailFormData.email, emailFormData.companyName);
-      console.log("E-Mail captured:", emailFormData);
-      
-      // Simulate PDF generation delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-    } catch (error) {
-      console.error("Error sending email:", error);
-    } finally {
-      setIsGeneratingPDF(false);
+  const handleBack = useCallback(() => {
+    if (showEmailGate) {
       setShowEmailGate(false);
-      setShowResults(true);
+    } else if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
     }
+  }, [showEmailGate, currentStep]);
+
+  const handleEmailSubmit = async (data: { email: string; newsletter: boolean }) => {
+    setIsGeneratingPDF(true);
+    // Simulate API call
+    setTimeout(() => {
+        setEmailCaptured(true);
+        setIsGeneratingPDF(false);
+        setShowEmailGate(false);
+        setShowResults(true);
+    }, 1500);
   };
 
-  const handleEmailSkip = () => {
-    setEmailCaptured(false);
-    setShowEmailGate(false);
-    setShowResults(true);
+  const handleGeneratePDF = () => {
+      const ampel = calculateAmpel(formData);
+      const todos = getTopTodos(formData);
+      // Merge Email Data if available
+      const pdfFormData = { ...formData, ...emailFormData }; 
+      generatePDF(ampel, todos, pdfFormData);
   };
 
+  const handleRestart = () => {
+      setFormData({});
+      setCurrentStep(0);
+      setShowResults(false);
+      setShowEmailGate(false);
+      setEmailCaptured(false);
+  }
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "green":
-        return "bg-green-500";
-      case "yellow":
-        return "bg-yellow-500";
-      case "red":
-        return "bg-red-500";
-      default:
-        return "bg-gray-300";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "green":
-        return <CheckCircle className="w-6 h-6 text-green-600" />;
-      case "yellow":
-        return <AlertCircle className="w-6 h-6 text-yellow-600" />;
-      case "red":
-        return <XCircle className="w-6 h-6 text-red-600" />;
-      default:
-        return null;
-    }
-  };
-
-  const generatePDF = () => {
-    const ampel = calculateAmpel();
-    const todos = getTopTodos();
-    const doc = new jsPDF();
-    let yPos = 20;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const maxWidth = pageWidth - 2 * margin;
-
-    // Header
-    doc.setFontSize(20);
-    doc.setFont(undefined, 'bold');
-    doc.text('DSGVO Compliance QuickCheck', margin, yPos);
-    yPos += 10;
-    
-    doc.setFontSize(12);
-    doc.setFont(undefined, 'normal');
-    const dateStr = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    doc.text(`Erstellt am: ${dateStr}`, margin, yPos);
-    yPos += 8;
-    
-    if (formData.name || formData.firma) {
-      doc.setFontSize(10);
-      doc.text(`Für: ${formData.firma || formData.name || 'Nicht angegeben'}`, margin, yPos);
-      yPos += 6;
-    }
-    yPos += 5;
-
-    // Executive Summary
-    doc.setFontSize(14);
-    doc.setFont(undefined, 'bold');
-    doc.text('Executive Summary', margin, yPos);
-    yPos += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    const gesamtStatusText = 
-      ampel.gesamt === "green" ? "Vollständig compliant" :
-      ampel.gesamt === "yellow" ? "Teilweise compliant - Nachbesserung nötig" :
-      "Kritische Lücken - sofortige Maßnahmen erforderlich";
-    
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { gesamt: _gesamt, ...ampelBereiche } = ampel;
-    type AmpelBereich = { status: string; issues: string[]; details: string[] };
-    const redCount = Object.values(ampelBereiche).filter((r: AmpelBereich) => r.status === "red").length;
-    const yellowCount = Object.values(ampelBereiche).filter((r: AmpelBereich) => r.status === "yellow").length;
-    
-    const summaryLines = doc.splitTextToSize(
-      `${gesamtStatusText}. ${redCount > 0 ? `${redCount} kritische Bereiche` : ''} ${yellowCount > 0 ? `${yellowCount} Bereiche mit Handlungsbedarf` : ''}. ${todos.length > 0 ? `Top-Priorität: ${todos[0].title}` : 'Alle Bereiche sind compliant.'}`,
-      maxWidth
-    );
-    doc.text(summaryLines, margin, yPos);
-    yPos += summaryLines.length * 5 + 5;
-
-    // Ampel-Übersicht
-    doc.setFontSize(14);
-    doc.setFont(undefined, 'bold');
-    doc.text('Compliance-Status nach Bereichen', margin, yPos);
-    yPos += 8;
-
-    const bereiche = [
-      { key: "dsgvo", label: "DSGVO" },
-      { key: "euKiAkt", label: "EU-KI-Akt" },
-      { key: "bfsg", label: "BFSG (Barrierefreiheit)" },
-      { key: "nis2", label: "NIS2 (Meldepflichten)" },
-      { key: "gobd", label: "GoBD (Aufbewahrung)" },
-      { key: "mitarbeiter", label: "Mitarbeiter-Dokumentation" },
-    ];
-
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    
-    bereiche.forEach(({ key, label }) => {
-      if (yPos > 250) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      const status = ampel[key].status;
-      const statusSymbol = status === "green" ? "✓" : status === "yellow" ? "⚠" : "✗";
-      const statusText = status === "green" ? "Grün" : status === "yellow" ? "Gelb" : "Rot";
-      
-      doc.text(`${statusSymbol} ${label}: ${statusText}`, margin, yPos);
-      yPos += 5;
-      
-      if (ampel[key].issues.length > 0) {
-        ampel[key].issues.forEach((issue) => {
-          const issueLines = doc.splitTextToSize(`  • ${issue}`, maxWidth - 10);
-          doc.text(issueLines, margin + 5, yPos);
-          yPos += issueLines.length * 4;
-        });
-        yPos += 2;
-      }
-    });
-
-    // Top-Todos
-    if (todos.length > 0) {
-      if (yPos > 220) {
-        doc.addPage();
-        yPos = 20;
-      }
-      
-      yPos += 5;
-      doc.setFontSize(14);
-      doc.setFont(undefined, 'bold');
-      doc.text('Prioritäre Handlungsempfehlungen', margin, yPos);
-      yPos += 8;
-
-      doc.setFontSize(10);
-      doc.setFont(undefined, 'normal');
-      
-      todos.forEach((todo, index) => {
-        if (yPos > 250) {
-          doc.addPage();
-          yPos = 20;
-        }
-        
-        doc.setFont(undefined, 'bold');
-        doc.text(`${index + 1}. ${todo.title}`, margin, yPos);
-        yPos += 5;
-        
-        doc.setFont(undefined, 'normal');
-        const descLines = doc.splitTextToSize(todo.description, maxWidth);
-        doc.text(descLines, margin + 5, yPos);
-        yPos += descLines.length * 4;
-        
-        doc.setFontSize(9);
-        doc.text(`Deadline: ${todo.deadline}`, margin + 5, yPos);
-        yPos += 6;
-      });
-    }
-
-    // Footer
-    const totalPages = doc.internal.pages.length - 1;
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setFont(undefined, 'italic');
-      doc.text(
-        'Dieser Quickcheck dient als erste Einschätzung. Keine Rechtsberatung.',
-        margin,
-        doc.internal.pageSize.getHeight() - 10
-      );
-      doc.text(
-        `Seite ${i} von ${totalPages}`,
-        pageWidth - margin - 20,
-        doc.internal.pageSize.getHeight() - 10
-      );
-    }
-
-    // Download
-    const fileName = `DSGVO-Compliance-Report-${dateStr.replace(/\./g, '-')}.pdf`;
-    doc.save(fileName);
-  };
-
-  // Tastatur-Navigation (Best Practice): Pfeiltasten links/rechts + Enter für Weiter
+  // Keyboard Navigation
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (showResults) return;
-      // Verhindere Konflikte mit Eingabefeldern
-      const target = event.target as HTMLElement | null;
-      const isInput =
-        target &&
-        (target.tagName === "INPUT" ||
-          target.tagName === "SELECT" ||
-          target.tagName === "TEXTAREA");
+      if (showResults || showEmailGate) return;
+      const target = event.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT") return;
 
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        if (!(!currentValue && !isOptionalQuestion)) {
-          if (currentStep < filteredQuestions.length - 1) {
-            setCurrentStep(currentStep + 1);
-          } else {
-            setShowResults(true);
-          }
-        }
-      } else if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        if (currentStep > 0) {
-          setCurrentStep(currentStep - 1);
-        }
-      } else if (event.key === "Enter" && !isInput) {
-        event.preventDefault();
-        if (!(!currentValue && !isOptionalQuestion)) {
-          if (currentStep < filteredQuestions.length - 1) {
-            setCurrentStep(currentStep + 1);
-          } else {
-            setShowResults(true);
-          }
-        }
-      }
+      if (event.key === "ArrowLeft") handleBack();
+      // ArrowRight removed to prevent skipping without selection
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [showResults, currentValue, isOptionalQuestion, currentStep, filteredQuestions.length]);
+  }, [currentStep, showResults, showEmailGate, handleBack]);
+
+  // --- RENDER ---
 
   if (showResults) {
-    const ampel = calculateAmpel();
-    const todos = getTopTodos();
-
-    return (
-      <div className="h-full flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl">
-          <div className="bg-[#12151b] rounded-2xl border border-white/10 p-10">
-            {/* Ergebnis-Überschrift - H2 für Fragebogen-Standard */}
-            <h2 className="text-2xl font-semibold text-white mb-2">
-              Ihr Compliance-Status
-            </h2>
-            <p className="text-white/60 mb-6">Basierend auf Ihren Angaben</p>
-
-            {/* Gesamt-Status */}
-            <div className="mb-8 bg-[#0b0d10] rounded-lg border border-white/10 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold text-white mb-2">
-                    Gesamt-Status
-                  </h2>
-                  <p className="text-white/70">
-                    {ampel.gesamt === "green" && "Vollständig compliant ✅"}
-                    {ampel.gesamt === "yellow" &&
-                      "Teilweise compliant - Nachbesserung nötig ⚠️"}
-                    {ampel.gesamt === "red" &&
-                      "Kritische Lücken - sofortige Maßnahmen ❌"}
-                  </p>
-                </div>
-                <div
-                  className={`w-16 h-16 rounded-full ${getStatusColor(
-                    ampel.gesamt
-                  )} flex items-center justify-center`}
-                >
-                  {getStatusIcon(ampel.gesamt)}
-                </div>
-              </div>
-            </div>
-
-            {/* Bereiche */}
-            <div className="space-y-4 mb-8">
-              {[
-                { key: "dsgvo", label: "DSGVO" },
-                { key: "euKiAkt", label: "EU-KI-Akt" },
-                { key: "bfsg", label: "BFSG (Barrierefreiheit)" },
-                { key: "nis2", label: "NIS2 (Meldepflichten)" },
-                { key: "gobd", label: "GoBD (Aufbewahrung)" },
-                { key: "mitarbeiter", label: "Mitarbeiter-Dokumentation" },
-              ].map(({ key, label }) => (
-                <div key={key} className="p-4 bg-[#0b0d10] rounded-lg border border-white/10">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      {getStatusIcon(ampel[key].status)}
-                      <h3 className="font-semibold text-white">{label}</h3>
-                    </div>
-                    <div
-                      className={`w-3 h-3 rounded-full ${getStatusColor(
-                        ampel[key].status
-                      )}`}
-                    />
-                  </div>
-                  {ampel[key].issues.length > 0 && (
-                    <div className="ml-8 space-y-1">
-                      {ampel[key].issues.map((issue, idx) => (
-                        <p key={idx} className="text-sm text-white/70">
-                          • {issue}
-                        </p>
-                      ))}
-                      {ampel[key].details.map((detail, idx) => (
-                        <p key={idx} className="text-xs text-white/50 italic">
-                          {detail}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Top-Todos */}
-            {todos.length > 0 && (
-              <div className="mb-8 bg-[#0b0d10] rounded-lg border border-white/10 p-6">
-                <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <FileText className="w-6 h-6 text-white/70" />
-                  Prioritäre Handlungsempfehlungen
-                </h2>
-                <ol className="space-y-4">
-                  {todos.map((todo, index) => (
-                    <li key={index} className="flex gap-3">
-                      <span
-                        className={`font-bold ${
-                          todo.priority === "red"
-                            ? "text-red-400"
-                            : "text-yellow-400"
-                        } min-w-[24px]`}
-                      >
-                        {index + 1}.
-                      </span>
-                      <div className="flex-1">
-                        <p className="font-semibold text-white mb-1">
-                          {todo.title}
-                        </p>
-                        <p className="text-sm text-white/70 mb-1">
-                          {todo.priority === "red" ? "🔴" : "🟡"}{" "}
-                          {todo.description}
-                        </p>
-                        <p className="text-xs text-white/50 mb-2">
-                          ⏰ Deadline: {todo.deadline}
-                        </p>
-                        {todo.link && (
-                          <a
-                            href={todo.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1"
-                          >
-                            <ExternalLink className="w-3 h-3" />
-                            Mehr erfahren
-                          </a>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex gap-4">
-              <button
-                onClick={generatePDF}
-                className="glow-btn inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium transition hover:scale-[1.02] flex-1"
-              >
-                <Download className="w-5 h-5" />
-                PDF-Report herunterladen
-              </button>
-              <button
-                onClick={() => {
-                  setShowResults(false);
-                  setCurrentStep(0);
-                }}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-transparent border border-white/10 text-white text-sm font-medium transition hover:border-white/30 hover:scale-[1.02] flex-1"
-              >
-                Neu starten
-              </button>
-            </div>
-
+      const ampel = calculateAmpel(formData);
+      const todos = getTopTodos(formData);
+      return (
+          <div className="h-[100dvh] w-full bg-[#0b1219] overflow-y-auto">
+             <ResultsPage 
+               ampel={ampel} 
+               todos={todos} 
+               onDownloadPdf={handleGeneratePDF}
+               onRestart={handleRestart}
+             />
           </div>
-        </div>
-      </div>
-    );
+      );
   }
 
-  // E-Mail Gate (vor Ergebnis-Anzeige)
-  if (showEmailGate) {
-    return (
-      <div className="h-full flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl">
-          <div className="bg-[#12151b] rounded-2xl border border-white/10 p-10">
-            <div className="text-center mb-8">
-              <div className="text-6xl mb-4">📊</div>
-              <h2 className="text-2xl font-semibold text-white mb-3">
-                Ihr Compliance-Check ist fertig!
-              </h2>
-              <p className="text-white/60 leading-relaxed">
-                Erhalten Sie Ihren persönlichen PDF-Report per E-Mail –<br />
-                mit allen Details und Handlungsempfehlungen.
-              </p>
-            </div>
-
-            <div className="space-y-6 mb-6">
-              {/* E-Mail Input */}
-              <div className="space-y-2">
-                <label htmlFor="email-gate-email" className="text-xs text-white/50 uppercase tracking-widest">
-                  E-Mail-Adresse *
-                </label>
-                <input
-                  id="email-gate-email"
-                  type="email"
-                  value={emailFormData.email}
-                  onChange={(e) => setEmailFormData({...emailFormData, email: e.target.value})}
-                  className="w-full bg-[#0b0d10] border border-white/10 rounded-lg px-4 py-3 text-sm outline-none focus:border-white/30 text-white"
-                  placeholder="ihre@email.de"
-                  style={{ fontSize: '16px' }} // Prevent iOS zoom
-                />
-              </div>
-
-              {/* Firmenname (optional) */}
-              <div className="space-y-2">
-                <label htmlFor="email-gate-company" className="text-xs text-white/50 uppercase tracking-widest">
-                  Firmenname (optional)
-                </label>
-                <input
-                  id="email-gate-company"
-                  type="text"
-                  value={emailFormData.companyName}
-                  onChange={(e) => setEmailFormData({...emailFormData, companyName: e.target.value})}
-                  className="w-full bg-[#0b0d10] border border-white/10 rounded-lg px-4 py-3 text-sm outline-none focus:border-white/30 text-white"
-                  placeholder="Ihr Unternehmen"
-                  style={{ fontSize: '16px' }}
-                />
-              </div>
-
-              {/* Privacy Checkbox */}
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={emailFormData.agreeToPrivacy}
-                  onChange={(e) => setEmailFormData({...emailFormData, agreeToPrivacy: e.target.checked})}
-                  className="mt-1 w-5 h-5 rounded border-white/10 bg-[#0b0d10] text-indigo-500 focus:ring-indigo-500"
-                />
-                <span className="text-sm text-white/70">
-                  Ich akzeptiere die{' '}
-                  <a href="/datenschutz" target="_blank" className="text-indigo-400 hover:text-indigo-300 underline">
-                    Datenschutzerklärung
-                  </a>{' '}
-                  und möchte den Report per E-Mail erhalten.
-                </span>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleEmailSubmit}
-              disabled={isGeneratingPDF}
-              className="w-full glow-btn inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-base font-semibold transition hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-4"
-            >
-              {isGeneratingPDF ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  Wird generiert...
-                </>
-              ) : (
-                <>
-                  📧 Report anzeigen & per E-Mail senden
-                </>
-              )}
-            </button>
-
-            {/* Skip Option */}
-            <div className="text-center">
-              <button
-                onClick={handleEmailSkip}
-                className="text-sm text-white/60 hover:text-white underline transition"
-              >
-                Ohne E-Mail fortfahren →
-              </button>
-              <p className="text-xs text-white/40 mt-1">
-                (Report nur auf Bildschirm, kein PDF-Download)
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Hauptlayout: Zentriert, Mobile-First (keine Sidebar)
   return (
-    <div className="h-full w-full max-w-2xl mx-auto flex flex-col gap-6 px-4 py-6">
-      {/* Kopf / Progress */}
-      <header className="space-y-3">
-        <div className="text-center">
-          <p className="text-xs uppercase tracking-widest text-white/50 mb-1">
-            DSGVO‑Ampel · Quickcheck
-          </p>
-          <h1 className="text-xl md:text-2xl font-semibold text-white leading-tight">
-            Datenschutz‑ & KI‑Compliance
-          </h1>
+    <div className="h-[100dvh] flex flex-col bg-[#0b1219] text-white selection:bg-indigo-500/30 overflow-hidden">
+      
+      {/* Header / Progress - Fixed Top */}
+      <header className="shrink-0 pt-6 pb-4 px-6 max-w-2xl mx-auto w-full z-20 bg-[#0b1219]/95 backdrop-blur-sm">
+        <div className="flex justify-between items-end mb-2">
+           <div>
+             <h1 className="text-sm font-bold tracking-widest text-[#00faff] uppercase">
+                DSGVO & KI Compliance
+             </h1>
+             <p className="text-xs text-white/50 mt-1">
+                Quickcheck 2026
+             </p>
+           </div>
+           <span className="text-xs font-mono text-white/50">
+               {Math.round(progress)}%
+           </span>
         </div>
-
-        <div>
-          <div className="flex justify-between text-xs text-white/50 mb-1">
-            <span>
-              Frage {currentStep + 1} von {filteredQuestions.length}
-            </span>
-            <span className="hidden sm:inline">Navigation: ← / →</span>
-          </div>
-          <div className="w-full bg-[#12151b] rounded-full h-2 border border-white/10">
-            <div
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-              role="progressbar"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`Fortschritt: ${progress}%`}
+        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+            <motion.div 
+                className="h-full bg-[#00faff] shadow-[0_0_10px_rgba(0,250,255,0.5)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: "circOut" }}
             />
-          </div>
         </div>
       </header>
 
-      {/* Zentrierte Content-Card */}
-      <main className="bg-[#12151b] rounded-2xl p-6 md:p-10 border border-white/10 flex-1 flex flex-col min-h-0 overflow-y-auto">
-            {/* Kategorie */}
-            <span className="text-xs uppercase tracking-widest text-white/50 mb-4">
-              {currentQuestion.category}
-            </span>
+      {/* Main Content Area - Scrollable Overlay */}
+      <main className="flex-1 w-full max-w-2xl mx-auto relative overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-32 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="min-h-full flex flex-col justify-start pt-2 md:pt-4">
+            <AnimatePresence mode="wait">
+                {showEmailGate ? (
+                    <motion.div
+                        key="email-gate"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="w-full"
+                    >
+                        <div className="pa-card !h-auto !overflow-visible p-8 bg-[#12151b] border border-white/10 shadow-2xl">
+                        <EmailGate onSubmit={handleEmailSubmit} isLoading={isGeneratingPDF} />
+                        <button onClick={handleBack} className="mt-6 text-sm text-white/40 hover:text-white block mx-auto py-2 transition-colors">
+                            Zurück zur Überprüfung
+                        </button>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key={currentQuestion?.id || "loading"}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="w-full"
+                    >
+                        {currentQuestion && (
+                            <div className="pa-card !h-auto !overflow-visible p-6 md:p-10 min-h-[450px] flex flex-col gap-6 bg-[#12151b] border border-white/10 shadow-2xl relative">
+                                <QuestionCard 
+                                    question={currentQuestion}
+                                    value={formData[currentQuestion.id]}
+                                    onChange={handleOptionSelect}
+                                />
 
-            {/* Frage */}
-            <h2 className="text-2xl font-semibold text-white leading-tight mb-6">
-              {currentQuestion.title}
-            </h2>
+                                <div className="mt-auto pt-8 flex justify-between items-center border-t border-white/5">
+                                    <button
+                                        onClick={handleBack}
+                                        disabled={currentStep === 0}
+                                        className={`
+                                            pa-btn pa-btn-secondary text-sm px-6
+                                            ${currentStep === 0 ? "opacity-0 pointer-events-none" : "opacity-100"}
+                                        `}
+                                    >
+                                        Zurück
+                                    </button>
 
-            {/* Antwort-Inputs */}
-            <div className="space-y-6">
-              {currentQuestion.type === "select" && (
-                <div className="space-y-2">
-                  <label className="text-xs text-white/50">Auswahl</label>
-                  <select
-                    value={currentValue || ""}
-                    onChange={(e) => handleChange(e.target.value)}
-                    className="w-full bg-[#0b0d10] border border-white/10 rounded-lg px-4 py-3 text-sm outline-none focus:border-white/30 text-white"
-                  >
-                    <option value="">Bitte wählen...</option>
-                    {currentQuestion.options.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {currentQuestion.type === "radio" && (
-                <div className="space-y-3">
-                  {currentQuestion.options.map((opt) => {
-                    const Icon = opt.icon;
-                    const selected = currentValue === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => handleChange(opt.value)}
-                        className={`w-full p-4 border rounded-lg text-left transition-all flex items-center gap-3 ${
-                          selected
-                            ? "border-white/30 bg-white/5"
-                            : "border-white/10 hover:border-white/20 bg-[#0b0d10]"
-                        }`}
-                      >
-                        {Icon && (
-                          <Icon
-                            className={`w-5 h-5 ${
-                              selected ? "text-white" : "text-white/60"
-                            }`}
-                          />
+                                    <button
+                                        onClick={handleNext}
+                                        disabled={!formData[currentQuestion.id] && currentQuestion.type !== 'multiselect'} 
+                                        className="pa-btn pa-btn-primary px-8"
+                                    >
+                                        {currentStep === filteredQuestions.length - 1 ? "Auswertung" : "Weiter"}
+                                    </button>
+                                </div>
+                            </div>
                         )}
-                        <span className={`font-medium ${
-                          selected ? "text-white" : "text-white/70"
-                        }`}>
-                          {opt.label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+      </main>
+      
+      {/* Footer - Fixed Bottom */}
+      <footer className="shrink-0 py-4 text-center text-[10px] text-white/20 uppercase tracking-widest bg-[#0b1219] z-20">
+         <a href="#" className="hover:text-white/50 transition-colors mx-2">Impressum</a> • 
+         <a href="#" className="hover:text-white/50 transition-colors mx-2">Datenschutz</a>
+      </footer>
 
-              {(currentQuestion.type === "text" ||
-                currentQuestion.type === "email") && (
-                <div className="space-y-2">
-                  <label className="text-xs text-white/50">Eingabe</label>
-                  <input
-                    type={currentQuestion.type}
-                    value={currentValue || ""}
-                    onChange={(e) => handleChange(e.target.value)}
-                    className="w-full bg-[#0b0d10] border border-white/10 rounded-lg px-4 py-3 text-sm outline-none focus:border-white/30 text-white"
-                    placeholder={currentQuestion.helpText}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Kurz-Hilfe direkt unter der Frage */}
-            {currentQuestion.helpText && (
-              <p className="mt-4 text-sm text-white/60 leading-relaxed">
-                {currentQuestion.helpText}
-              </p>
-            )}
-
-            {/* Hintergrund & Hilfe (eingeklappt) */}
-            {(currentQuestion.infoCard || currentQuestion.rechtsgrundlage || currentQuestion.deadline || currentQuestion.warning) && (
-              <details className="mt-6 group">
-                <summary className="cursor-pointer list-none flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white transition-colors py-2">
-                  📚 Hintergrund & Hilfe ▼
-                </summary>
-
-                <div className="mt-4 space-y-4 pl-4 border-l-2 border-white/10">
-                  {currentQuestion.infoCard && (
-                    <div className="space-y-2">
-                      <p className="font-semibold text-white text-sm">
-                        {currentQuestion.infoCard.title}
-                      </p>
-                      <p className="text-sm text-white/60 leading-relaxed">
-                        {currentQuestion.infoCard.content}
-                      </p>
-                      {currentQuestion.infoCard.links &&
-                        currentQuestion.infoCard.links.length > 0 && (
-                          <div className="space-y-2 pt-2">
-                            <p className="text-xs font-semibold text-white/50 uppercase tracking-widest">
-                              Weiterführende Links
-                            </p>
-                            {currentQuestion.infoCard.links.map((link, idx) => (
-                              <a
-                                key={idx}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                                <span>{link.text}</span>
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                    </div>
-                  )}
-
-                  {currentQuestion.rechtsgrundlage && (
-                    <div className="rounded-lg border border-white/10 bg-[#0b0d10] p-3">
-                      <p className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-1">
-                        Rechtsgrundlage
-                      </p>
-                      <p className="text-xs text-white/70">
-                        {currentQuestion.rechtsgrundlage}
-                      </p>
-                    </div>
-                  )}
-
-                  {currentQuestion.deadline && (
-                    <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
-                      <p className="text-xs font-semibold text-yellow-400 uppercase tracking-widest mb-1">
-                        Wichtige Frist
-                      </p>
-                      <p className="text-xs text-white/70">
-                        ⏰ {currentQuestion.deadline}
-                      </p>
-                    </div>
-                  )}
-
-                  {currentQuestion.warning && (
-                    <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
-                      <p className="text-xs font-semibold text-red-400 uppercase tracking-widest mb-1">
-                        Hinweis
-                      </p>
-                      <p className="text-xs text-white/70">
-                        {currentQuestion.warning}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </details>
-            )}
-
-            <div className="mt-auto pt-4 border-t border-white/10 text-xs text-white/40">
-              <p>
-                Dieser Quickcheck ersetzt keine Rechtsberatung, hilft aber bei
-                der Priorisierung Ihrer nächsten Schritte.
-              </p>
-            </div>
-          </main>
-
-        {/* Navigation unten */}
-        <footer className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-4">
-            <button
-              type="button"
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-transparent border border-white/10 text-white text-sm font-medium transition hover:border-white/30 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              Zurück
-            </button>
-
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={!currentValue && !isOptionalQuestion}
-              className="glow-btn inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium transition hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {currentStep === filteredQuestions.length - 1
-                ? "Ergebnis anzeigen"
-                : "Weiter"}
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-          <p className="text-[10px] text-white/40 text-right">
-            Shortcuts: ← / → für Navigation, Enter = Weiter
-          </p>
-        </footer>
-      </div>
+    </div>
   );
-};
-
-export default DSGVOAmpelFormular;
+}

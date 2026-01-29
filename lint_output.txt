@@ -1,0 +1,43 @@
+
+> dsgvo-ampel-suite@0.1.0 lint
+> next lint
+
+`next lint` is deprecated and will be removed in Next.js 16.
+For new projects, use create-next-app to choose your preferred linter.
+For existing projects, migrate to the ESLint CLI:
+npx @next/codemod@canary next-lint-to-eslint-cli .
+
+
+./app/dsgvo-ampel/components/QuestionCard.tsx
+3:10  Warning: 'motion' is defined but never used.  @typescript-eslint/no-unused-vars
+3:18  Warning: 'AnimatePresence' is defined but never used.  @typescript-eslint/no-unused-vars
+4:20  Warning: 'QuestionOption' is defined but never used.  @typescript-eslint/no-unused-vars
+6:23  Warning: 'Check' is defined but never used.  @typescript-eslint/no-unused-vars
+10:10  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+11:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/dsgvo-ampel/data/questions.ts
+6:10  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+17:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/dsgvo-ampel/page.tsx
+3:10  Warning: 'useState' is defined but never used.  @typescript-eslint/no-unused-vars
+29:6  Warning: React Hook useCallback has unnecessary dependencies: 'currentStep' and 'showEmailGate'. Either exclude them or remove the dependency array. Outer scope values like 'showEmailGate' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+45:6  Warning: React Hook useEffect has unnecessary dependencies: 'currentStep', 'showEmailGate', and 'showResults'. Either exclude them or remove the dependency array. Outer scope values like 'currentStep' aren't valid dependencies because mutating them doesn't re-render the component.  react-hooks/exhaustive-deps
+55:15  Error: 'ResultsPage' is not defined.  react/jsx-no-undef
+106:26  Error: 'EmailGate' is not defined.  react/jsx-no-undef
+123:34  Error: 'QuestionCard' is not defined.  react/jsx-no-undef
+
+./app/dsgvo-ampel/utils/ampelLogic.ts
+1:29  Warning: 'AmpelBereich' is defined but never used.  @typescript-eslint/no-unused-vars
+3:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+4:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+124:56  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+136:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./app/dsgvo-ampel/utils/pdfGenerator.ts
+4:74  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+43:21  Warning: '_gesamt' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+139:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

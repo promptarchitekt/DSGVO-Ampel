@@ -391,6 +391,30 @@ select option {
   transition: transform 0.6s ease;
 }
 
-.glow-btn:hover::before {
-  transform: translateX(100%);
+
+/* Social icons – Ported from Portal for consistency */
+.pa-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--pa-cyan);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
+
+.pa-social-icon:hover {
+  border-color: var(--pa-cyan);
+  color: var(--pa-gold);
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(0, 250, 255, 0.15);
+}
+

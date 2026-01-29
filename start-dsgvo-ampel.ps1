@@ -46,6 +46,17 @@ if (!(Test-Path "node_modules")) {
     Write-Host ""
 }
 
+# Build ausführen, um Fehler frühzeitig zu erkennen
+Write-Host "  Führe Build aus (npm run build)..." -ForegroundColor Yellow
+npm run build
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "  Build fehlgeschlagen. Bitte Fehler prüfen." -ForegroundColor Red
+    Read-Host "Enter drücken zum Beenden"
+    exit
+}
+Write-Host "  Build erfolgreich." -ForegroundColor Green
+Write-Host ""
+
 # Dev-Server in neuem PowerShell-Fenster starten (kein CMD)
 Write-Host "  Starte Entwicklungsserver (npm run dev) in separatem PowerShell-Fenster..." -ForegroundColor Green
 $devCommand = "Set-Location `"$projectRoot`"; npm run dev"
