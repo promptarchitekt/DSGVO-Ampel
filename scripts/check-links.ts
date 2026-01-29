@@ -30,8 +30,13 @@ async function checkLinks() {
 
   for (const item of links) {
     try {
-      // Use standard fetch
-      const response = await fetch(item.url, { method: "HEAD" });
+      // Use standard fetch with User-Agent to avoid 403/400 from strict servers (BSI, BMI)
+      const response = await fetch(item.url, { 
+        method: "HEAD",
+        headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+      });
       
       const status = response.status;
       const ok = response.ok; // 200-299
@@ -40,9 +45,13 @@ async function checkLinks() {
         console.log(`✅ [${status}] ${item.key}`);
       } else {
         // Some servers reject HEAD, try GET
-        if (status === 405 || status === 403) {
+        if (status === 405 || status === 403 || status === 400) {
             console.log(`⚠️  [${status}] ${item.key} - Retrying with GET...`);
-            const getResp = await fetch(item.url);
+            const getResp = await fetch(item.url, {
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                }
+            });
             if(getResp.ok) {
                 console.log(`✅ [${getResp.status}] ${item.key} (via GET)`);
             } else {

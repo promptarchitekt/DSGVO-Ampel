@@ -10,26 +10,28 @@ export const EXTERNAL_LINKS = {
   },
   ki: {
     // Official Federal Network Agency AI Portal (Shortlink)
-    risikokategorien: "https://www.bnetza.de/ki", 
+    risikokategorien: "https://digital-strategy.ec.europa.eu/de/policies/european-approach-artificial-intelligence", 
     euAct: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32024R1689",
-    kompetenz: "https://www.bnetza.de/ki",
-    schulungIhk: "https://www.ihk-rhein-neckar.de/weiterbildung/eu-ki-verordnung",
+    kompetenz: "https://digital-strategy.ec.europa.eu/de/policies/european-approach-artificial-intelligence",
+    schulungIhk: "https://www.dihk.de/de/themen-und-positionen/digitalisierung/kuenstliche-intelligenz", // Stable DIHK Overview
   },
   bfsg: {
-    infosIhk: "https://www.ihk.de/rhein-neckar/recht/barrierefreiheitsstaerkungsgesetz-bfsg-5209948",
+    infosIhk: "https://www.bih.de/integrationsaemter/medien-und-publikationen/fachlexikon-der-beruflichen-teilhabe/barrierefreiheitsstaerkungsgesetz-bfsg/", // BIH Lexicon (Stable)
     wcagChecklist: "https://www.w3.org/WAI/WCAG22/quickref/",
     wcagTest: "https://wave.webaim.org/",
   },
   mitarbeiter: {
-    // Official Template from Baden-Wuerttemberg DPA
-    infos: "https://www.baden-wuerttemberg.datenschutz.de/muster-zur-erfuellung-der-informationspflichten-bei-der-erhebung-von-personenbezogenen-daten/",
+    // Official Tool from Baden-Wuerttemberg DPA (Landing Page)
+    infos: "https://www.baden-wuerttemberg.datenschutz.de/ds-gvo-clever/",
   },
   nis2: {
-    selbsttest: "https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/NIS2/nis2_node.html",
-    gesetz: "https://www.bmi.bund.de/DE/themen/it-und-digitalpolitik/nis2/nis2-node.html",
+    // IHK Munich NIS2 Hub (Bot-friendly & Stable)
+    selbsttest: "https://www.ihk-muenchen.de/de/Service/Recht-und-Steuern/Digitalisierung/nis2-richtlinie/",
+    gesetz: "https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32022L2555", // EU Lex (Always stable)
   },
   gobd: {
-    checkliste: "https://www.bundesfinanzministerium.de/Content/DE/Downloads/BMF_Schreiben/Weitere_Steuerthemen/Abgabenordnung/2019-11-28-GoBD.html",
-    eRechnung: "https://www.bundesfinanzministerium.de/Content/DE/Standardartikel/Themen/Steuern/e-rechnung.html",
+    // GoBD Checklist from IHK Munich (Very stable)
+    checkliste: "https://www.ihk-muenchen.de/de/Service/Recht-und-Steuern/Steuerrecht/Buchf%C3%BChrung-Bilanzierung/GoBD/", 
+    eRechnung: "https://www.e-rechnung-bund.de/",
   },
 } as const;
