@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prompt Architekt | Zeit zurück (Solo)</title>
+<style>
+        :root {
+            --vantablack: #020609;
+            --cyan: #00faff;
+            --gray: #a0aec0;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #ffc300;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--vantablack);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            position: relative;
+        }
+        .slide {
+            position: absolute;
+            inset: 0;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 60px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(30px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .brand { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .brand span { color: var(--cyan); }
+        .brand i { font-style: italic; font-weight: 400; color: var(--gray); }
+        .slogan { color: var(--gray); font-size: 14px; margin-bottom: 40px; }
+        h1 { font-size: 72px; font-weight: 800; letter-spacing: -2px; margin-bottom: 16px; line-height: 1; }
+        h2 { font-size: 48px; color: var(--cyan); margin-bottom: 24px; }
+        p { font-size: 24px; line-height: 1.4; color: #e2e8f0; max-width: 800px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+        .card { background: rgba(0, 250, 255, 0.05); border: 1px solid rgba(0, 250, 255, 0.1); padding: 32px; border-radius: 24px; }
+        .card h3 { color: var(--cyan); font-size: 18px; margin-bottom: 12px; text-transform: uppercase; }
+        .nav { position: fixed; bottom: 40px; right: 40px; display: flex; gap: 16px; }
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: 1px solid var(--cyan);
+            background: transparent;
+            color: var(--cyan);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .btn:hover { background: rgba(0, 250, 255, 0.1); }
+        .counter { position: fixed; bottom: 48px; left: 40px; font-size: 14px; color: var(--gray); font-family: monospace; }
+        .progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--cyan); transition: 0.3s; }
+    
+        .gold { color: var(--gold); font-weight: 800; }
+        .muted { color: var(--gray); }
+        .small { font-size: 18px; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">1 / 8</div>
+<div class="container">
+<!-- Slide 1 -->
+<div class="slide active"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><div class="slogan">Für Solo‑Selbstständige: KI, die entlastet – nicht überfordert.</div><h1>Zeit zurück.</h1><p>Du brauchst keine „KI für alles“.<br/>
+Du brauchst 1–2 <span class="gold">Abläufe</span>, die zuverlässig laufen.</p><p class="small" style="margin-top:18px;">So wenig KI wie möglich. So viel wie <span class="gold">nötig</span>.</p></div>
+<!-- Slide 2 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Wenn KI dich eher stresst</h2><p>Agenten, Automatisierung, „Jobs weg“ – klingt oft nach Chaos. Entscheidend ist nicht KI, sondern was sie dir im Alltag zurückgibt: <span class="gold">Zeit</span> und <span class="gold">Klarheit</span>.</p><div class="grid">
+<div class="card">
+<h3>Zeit &amp; Fokus</h3>
+<p class="small">Routine rausnehmen, ohne neues Tool‑Chaos. Du bleibst Entscheider: KI schlägt vor – du bestätigst.</p>
+</div>
+<div class="card">
+<h3>Ruhiger schlafen</h3>
+<p class="small">Nachvollziehbare Abläufe, klare Grenzen. Keine Magie. Keine Abhängigkeit.</p>
+</div>
+</div></div>
+<!-- Slide 3 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Was wir konkret bauen</h2><p>Wir starten nicht mit Tools, sondern mit einem <span class="gold">Prozess</span>, der dich jede Woche Zeit kostet.</p><div class="grid">
+<div class="card">
+<h3>Inputs</h3>
+<p class="small">2–3 Beispiele (dein Ton), Vorlagen, typische Fragen/Antworten.</p>
+</div>
+<div class="card">
+<h3>Workflow</h3>
+<p class="small">Prompt/Template/Automation – so einfach wie möglich, so stabil wie nötig.</p>
+</div>
+<div class="card">
+<h3>Tests</h3>
+<p class="small">Testfälle + Freigabe‑Schritte (Human‑in‑the‑loop), damit es zuverlässig bleibt.</p>
+</div>
+<div class="card">
+<h3>Hand‑over</h3>
+<p class="small">Kurzes Playbook, damit du unabhängig bleibst und es selbst weiter betreiben kannst.</p>
+</div>
+</div></div>
+<!-- Slide 4 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Typische Zeitfresser (Solo)</h2><p>
+• Anfragen → Vorqualifizierung → Terminvorschlag<br/>
+• Call‑Notizen → Zusammenfassung + Next Steps + Follow‑up<br/>
+• Angebot aus Stichpunkten (deine Vorlage, dein Ton)<br/>
+• FAQ/Standardantworten aus deiner Wissensbasis (Docs/Notion/Website)<br/>
+• Content‑Recycling: Notiz → Post/Newsletter/Skript
+</p><p class="small" style="margin-top:18px;">Start: Nenn mir den einen Ablauf, der dich am meisten <span class="gold">Zeit</span> kostet.</p></div>
+<!-- Slide 5 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Angebote</h2><p>Fixe Deliverables statt „Beratung ins Blaue“.</p><div class="grid-3">
+<div class="card">
+<h3>Zeitfresser‑Check</h3>
+<p class="small">30 Min. Top‑2 Zeitfresser + Empfehlung „machen / nicht machen“.</p>
+</div>
+<div class="card">
+<h3>Workflow Blueprint</h3>
+<p class="small">90 Min. 1 Prozess sauber beschrieben + Vorlagen + nächste Schritte.</p>
+</div>
+<div class="card">
+<h3>Quick‑Win Sprint</h3>
+<p class="small">1 Tag. 1 Workflow live inkl. Testfällen &amp; Hand‑over.</p>
+</div>
+</div><p class="small" style="margin-top:18px;">Optional: <span class="gold">Safety</span>/Quality‑Check (Evidenzgrade E0–E3) – keine Rechtsberatung.</p></div>
+<!-- Slide 6 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Ablauf (3 Schritte)</h2><p>Ruhig, nachvollziehbar, ohne Überforderung.</p><div class="grid-3">
+<div class="card">
+<h3>1) Klarheit</h3>
+<p class="small">Zielfragen, Inputs, Tonalität. Wir definieren: Was ist „fertig“? Was ist tabu?</p>
+</div>
+<div class="card">
+<h3>2) Bauen &amp; Testen</h3>
+<p class="small">Workflow bauen, Testfälle, Korrekturschleifen. Du gibst frei.</p>
+</div>
+<div class="card">
+<h3>3) Hand‑over</h3>
+<p class="small">Playbook + klare Schritte. Du kannst es danach selbst betreiben.</p>
+</div>
+</div><p class="small" style="margin-top:18px;">Prinzip: so wenig KI wie möglich – so viel wie <span class="gold">nötig</span>.</p></div>
+<!-- Slide 7 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Proof (echte Artefakte)</h2><div class="grid">
+<div class="card">
+<h3>Zero‑Data Tools</h3>
+<p class="small">DSGVO‑Ampel &amp; KI‑Kompetenztest: Bewertung lokal im Browser (keine Datenübertragung).</p>
+</div>
+<div class="card">
+<h3>Local‑First Workflow</h3>
+<p class="small">GPT‑Export‑Viewer: Chat‑Exports lokal aufbereiten &amp; exportieren (HTML/MD/TXT).</p>
+</div>
+</div><p class="small" style="margin-top:18px; color: var(--gray);">
+Rahmen: Datenminimierung, Nachvollziehbarkeit, klare Grenzen. Keine Rechtsberatung – nur strukturierte Hinweise &amp; nächste Schritte.
+</p><p class="small" style="margin-top:10px;">Du behältst <span class="gold">Kontrolle</span>. Kein Upload‑Zwang. Kein Tool‑Hype.</p></div>
+<!-- Slide 8 -->
+<div class="slide"><div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div><h2>Start</h2><h1 style="font-size:64px;">Schick mir deinen Zeitfresser.</h1><p>Eine Zeile reicht (z. B. „Anfragen“, „Angebote“, „Follow‑ups“, „Content“).<br/>
+Ich antworte mit: ob KI sinnvoll ist, und dem kleinsten Umsetzungsweg.</p><p class="small" style="margin-top:22px;"><span class="gold">hello@promptarchitekt.de</span></p><p class="muted small" style="margin-top:6px;">promptarchitekt.de</p></div>
+</div>
+<div class="nav">
+<button class="btn" id="prev">Zurück</button>
+<button class="btn" id="next">Weiter</button>
+</div>
+<script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        const progress = document.getElementById('progress');
+        const counter = document.getElementById('counter');
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            progress.style.width = ((current + 1) / total * 100) + '%';
+            counter.innerText = (current + 1) + ' / ' + total;
+        }
+        document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+        document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowRight') document.getElementById('next').click();
+            if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+        });
+    </script>
+</body>
+</html>

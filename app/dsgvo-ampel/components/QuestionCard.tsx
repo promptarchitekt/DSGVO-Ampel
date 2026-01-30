@@ -55,7 +55,7 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
             <select
               value={value || ""}
               onChange={(e) => onChange(e.target.value)}
-              className="w-full appearance-none bg-[#1e293b] border-2 border-white/10 text-white rounded-xl p-4 pr-12 text-lg focus:border-indigo-500 focus:outline-none transition-colors cursor-pointer"
+              className="w-full appearance-none bg-[#161b22] border-2 border-white/10 text-white rounded-xl p-4 pr-12 text-lg focus:border-indigo-500 focus:outline-none transition-colors cursor-pointer"
             >
               <option value="" disabled>
                 Bitte wählen...
@@ -85,7 +85,7 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
                     ${
                       isSelected
                         ? "bg-indigo-500/10 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.2)]"
-                        : "bg-[#1e293b]/80 border-white/10 hover:border-white/30 hover:bg-[#253045] hover:shadow-lg hover:shadow-indigo-500/5"
+                        : "bg-[#161b22] border-white/5 hover:border-white/20 hover:bg-[#1c222b] hover:shadow-lg hover:shadow-indigo-500/5"
                     }
                   `}
                 >

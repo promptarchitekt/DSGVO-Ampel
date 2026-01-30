@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prompt Architekt | Pitch Deck (v8 Pure Type)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --bg: #000000;
+            --text-main: #ffffff;
+            --text-dim: #bbbbbb; /* Previously #666 */
+            --cyan: #00faff;
+            --gold: #ffc300;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 120px 100px; /* Locked Top Position */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Option B: Fixed Header */
+        }
+        .slide.active { opacity: 1; visibility: visible; }
+        
+        /* Typography System */
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--cyan);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 80px;
+            font-weight: 800;
+            letter-spacing: -3.5px;
+            line-height: 0.95;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+        
+
+        
+        p {
+            font-size: 24px;
+            line-height: 1.4;
+            color: var(--text-dim);
+            max-width: 900px;
+            letter-spacing: -0.2px;
+        }
+        
+        .gold { color: var(--gold); }
+        .white { color: #fff; }
+        .block-link { display: block; margin-top: 16px; }
+
+        /* Grid System (No Cards) */
+        .col-3 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 60px; /* More whitespace */
+            margin-top: 60px;
+            border-top: 1px solid #333; /* Brighter separator */
+            padding-top: 40px;
+        }
+        
+        .col-item h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #888; /* Brighter than #444 */
+            margin-bottom: 16px;
+        }
+        
+        .col-item .headline {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        
+        .col-item p {
+            font-size: 18px;
+            color: #cccccc; /* Brighter than #666 */
+            line-height: 1.5;
+        }
+        
+        .price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        /* Lists (Bulletless) */
+        ul.clean-list { list-style: none; margin-bottom: 40px; }
+        ul.clean-list li {
+            font-size: 28px;
+            color: #888;
+            margin-bottom: 16px;
+            padding-left: 24px;
+            position: relative;
+        }
+        ul.clean-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #333;
+        }
+        
+        /* Footer Line */
+        .footer-line {
+            position: fixed;
+            bottom: 80px;
+            left: 100px;
+            right: 100px;
+            height: 1px;
+            background: #1a1a1a;
+        }
+        .footer-active {
+            height: 1px;
+            background: var(--cyan);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .footer-link {
+            position: absolute;
+            top: -30px;
+            left: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--cyan);
+            text-transform: uppercase;
+        }
+
+        /* Nav */
+        .nav { position: fixed; bottom: 40px; right: 100px; display: flex; gap: 20px; }
+        .btn { 
+            background: none; 
+            border: none; 
+            color: var(--cyan); 
+            font-family: 'JetBrains Mono'; 
+            cursor: pointer; 
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .btn:hover { color: #fff; text-shadow: 0 0 8px rgba(0, 250, 255, 0.4); }
+        .btn:active { color: var(--gold); transition: none; }
+
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Positionierung -->
+<div class="slide active">
+    <span class="label">01 / ARCHITECT</span>
+    <h1>Zeit zurück<br>für Kunden.</h1>
+    <p>Ich baue Solo-Selbstständigen einfache <span class="gold">KI-Abläufe</span> für ihre größten Zeitfresser – damit mehr Zeit für Kunden bleibt.</p>
+</div>
+
+<!-- Slide 2: Situation -->
+<div class="slide">
+    <span class="label">02 / DIAGNOSTIC</span>
+    <h1>Der größte Hebel?</h1>
+    <p>Wo verlierst du jede Woche Stunden?</p>
+    
+    <div class="col-3">
+        <div class="col-item">
+            <h3 style="color:var(--cyan)">PAIN 01</h3>
+            <div class="headline">Anfragen</div>
+            <p>Ewiges Ping-Pong & Terminsuche.</p>
+        </div>
+        <div class="col-item">
+            <h3 style="color:var(--cyan)">PAIN 02</h3>
+            <div class="headline">Calls</div>
+            <p>Notizen ausarbeiten, Summaries tippen.</p>
+        </div>
+        <div class="col-item">
+            <h3 style="color:var(--cyan)">PAIN 03</h3>
+            <div class="headline">Content</div>
+            <p>Planung und „was poste ich heute?“</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Angebot -->
+<div class="slide">
+    <span class="label">03 / PRICING</span>
+    <h1>Das Angebot.</h1>
+    <p>Klar. Fixpreis. Lieferbar.</p>
+    
+    <div class="col-3">
+        <div class="col-item">
+            <h3>CHECK</h3>
+            <span class="price">197 €</span>
+            <div class="headline">Zeitfresser-Check</div>
+            <p>Top-2-Prozesse + Plan.<br>30 Min Call + 24h PDF.</p>
+        </div>
+        <div class="col-item">
+            <h3 style="color:var(--gold)">SPRINT</h3>
+            <span class="price" style="color:var(--gold)">697 €</span>
+            <div class="headline" style="color:var(--gold)">Workflow-Sprint</div>
+            <p>1 kompletter Ablauf.<br>Prompt + Test + Anleitung.</p>
+        </div>
+        <div class="col-item">
+            <h3>RETAINER</h3>
+            <span class="price">297 €</span>
+            <div class="headline">Monats-Paket</div>
+            <p>1 neuer Ablauf/Monat.<br>Laufend + Support.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Abläufe -->
+<div class="slide">
+    <span class="label">04 / BLUEPRINTS</span>
+    <h1>Solutions.</h1>
+    
+    <div class="col-3">
+        <div class="col-item">
+            <h3>01 INTAKE</h3>
+            <div class="headline">Anfragen → Termin</div>
+            <p>Mail rein → 3 Fragen → Link raus.<br><span class="gold">2 Min statt 15 Min.</span></p>
+        </div>
+        <div class="col-item">
+            <h3>02 PROCESS</h3>
+            <div class="headline">Call → Action</div>
+            <p>10 Bullets → Summary + To-Dos.<br><span class="gold">3 Min statt 20 Min.</span></p>
+        </div>
+        <div class="col-item">
+            <h3>03 OUTPUT</h3>
+            <div class="headline">Notiz → Content</div>
+            <p>5 Stichpunkte → Post + Newsletter.<br><span class="gold">7 Min statt 45 Min.</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Ablauf -->
+<div class="slide">
+    <span class="label">05 / HOW IT WORKS</span>
+    <h1>Dein Invest.</h1>
+    
+    <div class="col-3">
+        <div class="col-item">
+            <h3>STEP 1</h3>
+            <div class="headline">Input</div>
+            <p>DU schickst 2-3 Beispiele (Mail, Notiz).</p>
+        </div>
+        <div class="col-item">
+            <h3>STEP 2</h3>
+            <div class="headline">Bau</div>
+            <p>ICH liefere Workflow + 3 Testfälle (48h).</p>
+        </div>
+        <div class="col-item">
+            <h3>STEP 3</h3>
+            <div class="headline">Go</div>
+            <p>DU testest → Freigabe → läuft.</p>
+        </div>
+    </div>
+     <p style="margin-top: 40px; font-size: 16px; color: #444; font-family:'JetBrains Mono'">Technik: ChatGPT + Deine Tools. Du behältst <span class="gold">100% Kontrolle</span>.</p>
+</div>
+
+<!-- Slide 6: Hero Asset -->
+<div class="slide">
+    <span class="label">06 / COPY PASTE</span>
+    <h1>Dein neuer Hero.</h1>
+    <div style="border-left: 2px solid var(--gold); padding-left: 40px; margin-top: 40px;">
+        <h1 style="font-size: 60px; margin-bottom: 20px;">Zeit für Kunden<br>statt Tipparbeit.</h1>
+        <p style="color: var(--cyan);">Anfragen schneller → Calls direkt actionable → Content aus Notizen</p>
+    </div>
+</div>
+
+<!-- Slide 7: CTA (The Reference Match) -->
+<div class="slide">
+    <span class="label">07 / START</span>
+    <h1>Welcher Prozess<br>nervt dich?</h1>
+    
+    <ul class="clean-list">
+        <li>Anfragen beantworten?</li>
+        <li>Call-Notizen tippen?</li>
+        <li>Content planen?</li>
+    </ul>
+    
+    <p style="font-size: 28px; color: #fff; margin-top: 40px;">
+        Schick mir 1 Beispiel → <span class="gold">Lösung in 24h.</span>
+    </p>
+
+    <!-- The exact footer style from screenshot -->
+    <div style="position: absolute; bottom: 80px; left: 100px; right: 100px; border-bottom: 1px solid var(--cyan); padding-bottom: 5px;">
+        <span style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--cyan); text-transform: uppercase;">LINKEDIN DM / EMAIL</span>
+    </div>
+</div>
+
+<!-- Slide 8: Contact / Card -->
+<div class="slide">
+    <span class="label">08 / CONTACT</span>
+    <h1>Lass uns bauen.</h1>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; max-width: 1000px;">
+        <!-- Left: Contact Data -->
+        <div>
+            <div style="margin-bottom: 40px;">
+                <h3 style="font-size: 32px; color: #fff; margin-bottom: 8px;">Marcel Reichl</h3>
+                <span style="font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 16px; letter-spacing: 1px;">PROMPT ARCHITEKT</span>
+            </div>
+            
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 24px;">
+                <li>
+                    <span style="display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: #666; margin-bottom: 4px;">EMAIL</span>
+                    <a href="mailto:info@promptarchitekt.de" style="color: #fff; font-size: 24px; text-decoration: none; border-bottom: 1px solid #333;">info@promptarchitekt.de</a>
+                </li>
+                <li>
+                    <span style="display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: #666; margin-bottom: 4px;">WEB</span>
+                    <a href="https://promptarchitekt.de" target="_blank" style="color: #fff; font-size: 24px; text-decoration: none; border-bottom: 1px solid #333;">promptarchitekt.de</a>
+                </li>
+                <li>
+                     <span style="display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: #666; margin-bottom: 4px;">SOCIAL</span>
+                     <div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <!-- LinkedIn -->
+                        <a href="https://www.linkedin.com/in/marcelreichl" target="_blank" style="color: var(--cyan); transition: color 0.2s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </a>
+                        <!-- GitHub -->
+                        <a href="https://github.com/promptarchitekt" target="_blank" style="color: var(--cyan); transition: color 0.2s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        </a>
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/promptarchitekt/" target="_blank" style="color: var(--cyan); transition: color 0.2s;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        </a>
+                     </div>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Right: QR Code -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
+            <div style="background: #fff; padding: 20px; border-radius: 4px;">
+                <!-- Fixed Local QR Code -->
+                <img src="file:///C:/pa/10-library/By-Design-Anker/QR-Code/QR-Code-Kontakt/525-kontakt.png" alt="QR Code" style="width: 250px; height: 250px; display: block;">
+            </div>
+            <span style="font-family: 'JetBrains Mono'; color: #666; font-size: 14px; margin-top: 20px;">
+                <span style="color: var(--gold);">→</span> SCANNEN & VERNETZEN
+            </span>
+        </div>
+    </div>
+    
+    <!-- Legal Footer -->
+    <div style="position: absolute; bottom: 40px; left: 100px; right: 100px; text-align: left;">
+         <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: #444;">
+            © 2026 <span style="color: var(--cyan); font-weight: 600;">PROMPT</span> <span style="color: #999;">ARCHITEKT</span> | Alle Rechte vorbehalten
+         </span>
+    </div>
+</div>
+
+<div class="nav">
+    <button class="btn" id="prev">PREV</button>
+    <button class="btn" id="next">NEXT</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    
+    function update() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    }
+    
+    document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+    document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+    document.addEventListener('keydown', e => {
+        if(e.key === 'ArrowRight') document.getElementById('next').click();
+        if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+    });
+</script>
+</body>
+</html>

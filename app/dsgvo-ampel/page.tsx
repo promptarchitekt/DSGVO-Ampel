@@ -74,6 +74,7 @@ export default function DsgvoAmpel() {
   }, [showEmailGate, currentStep]);
 
   const handleEmailSubmit = async (data: { email: string; newsletter: boolean }) => {
+    setEmailFormData(prev => ({ ...prev, email: data.email }));
     setIsGeneratingPDF(true);
     // Simulate API call
     setTimeout(() => {
@@ -120,7 +121,7 @@ export default function DsgvoAmpel() {
       const ampel = calculateAmpel(formData);
       const todos = getTopTodos(formData);
       return (
-          <div className="h-[100dvh] w-full bg-[#0b1219] overflow-y-auto">
+          <div className="h-full w-full bg-[#05090e] overflow-hidden relative">
              <ResultsPage 
                ampel={ampel} 
                todos={todos} 
@@ -132,10 +133,10 @@ export default function DsgvoAmpel() {
   }
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#0b1219] text-white selection:bg-indigo-500/30 overflow-hidden">
+    <div className="h-full flex flex-col bg-[#05090e] text-white selection:bg-indigo-500/30 overflow-hidden relative">
       
-      {/* Header / Progress - Fixed Top */}
-      <header className="shrink-0 pt-6 pb-4 px-6 max-w-2xl mx-auto w-full z-20 bg-[#0b1219]/95 backdrop-blur-sm">
+      {/* Header / Progress - Fixed Top relative to Main */}
+      <header className="shrink-0 pt-8 pb-4 px-6 max-w-2xl mx-auto w-full z-20 bg-[#05090e]/95 backdrop-blur-sm">
         <div className="flex justify-between items-end mb-2">
            <div>
              <h1 className="text-sm font-bold tracking-widest text-[#00faff] uppercase">
@@ -158,10 +159,10 @@ export default function DsgvoAmpel() {
             />
         </div>
       </header>
-
+      
       {/* Main Content Area - Scrollable Overlay */}
-      <main className="flex-1 w-full max-w-2xl mx-auto relative overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-32 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <div className="min-h-full flex flex-col justify-start pt-2 md:pt-4">
+      <main className="flex-1 w-full max-w-2xl mx-auto relative overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-28 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <div className="min-h-full flex flex-col justify-start pt-4 md:pt-10">
             <AnimatePresence mode="wait">
                 {showEmailGate ? (
                     <motion.div
@@ -171,11 +172,8 @@ export default function DsgvoAmpel() {
                         exit={{ opacity: 0, y: -20 }}
                         className="w-full"
                     >
-                        <div className="pa-card !h-auto !overflow-visible p-8 bg-[#12151b] border border-white/10 shadow-2xl">
+                        <div className="pa-card !h-auto !overflow-visible p-8 bg-[#0b1219] border border-white/10 shadow-2xl">
                         <EmailGate onSubmit={handleEmailSubmit} isLoading={isGeneratingPDF} />
-                        <button onClick={handleBack} className="mt-6 text-sm text-white/40 hover:text-white block mx-auto py-2 transition-colors">
-                            Zurück zur Überprüfung
-                        </button>
                         </div>
                     </motion.div>
                 ) : (
@@ -188,33 +186,12 @@ export default function DsgvoAmpel() {
                         className="w-full"
                     >
                         {currentQuestion && (
-                            <div className="pa-card !h-auto !overflow-visible p-6 md:p-10 min-h-[450px] flex flex-col gap-6 bg-[#12151b] border border-white/10 shadow-2xl relative">
+                            <div className="pa-card !h-auto !overflow-visible p-6 md:p-10 min-h-[300px] flex flex-col gap-6 bg-[#0b1219] boundary border border-white/10 shadow-2xl relative">
                                 <QuestionCard 
                                     question={currentQuestion}
                                     value={formData[currentQuestion.id]}
                                     onChange={handleOptionSelect}
                                 />
-
-                                <div className="mt-auto pt-8 flex justify-between items-center border-t border-white/5">
-                                    <button
-                                        onClick={handleBack}
-                                        disabled={currentStep === 0}
-                                        className={`
-                                            pa-btn pa-btn-secondary text-sm px-6
-                                            ${currentStep === 0 ? "opacity-0 pointer-events-none" : "opacity-100"}
-                                        `}
-                                    >
-                                        Zurück
-                                    </button>
-
-                                    <button
-                                        onClick={handleNext}
-                                        disabled={!formData[currentQuestion.id] && currentQuestion.type !== 'multiselect'} 
-                                        className="pa-btn pa-btn-primary px-8"
-                                    >
-                                        {currentStep === filteredQuestions.length - 1 ? "Auswertung" : "Weiter"}
-                                    </button>
-                                </div>
                             </div>
                         )}
                     </motion.div>
@@ -223,11 +200,37 @@ export default function DsgvoAmpel() {
         </div>
       </main>
       
-      {/* Footer - Fixed Bottom */}
-      <footer className="shrink-0 py-4 text-center text-[10px] text-white/20 uppercase tracking-widest bg-[#0b1219] z-20">
-         <a href="#" className="hover:text-white/50 transition-colors mx-2">Impressum</a> • 
-         <a href="#" className="hover:text-white/50 transition-colors mx-2">Datenschutz</a>
-      </footer>
+      {/* Navigation Buttons - Stacked above Global Footer */}
+      <div className="absolute bottom-0 left-0 right-0 z-40 bg-[#05090e]/95 backdrop-blur-md border-t border-white/5 p-4">
+          <div className="max-w-2xl mx-auto w-full flex justify-between items-center px-2">
+              {!showEmailGate && !showResults && (
+                <>
+                    <button
+                        onClick={handleBack}
+                        disabled={currentStep === 0}
+                        className={`
+                            px-6 py-3 rounded-full bg-[#161b22] border border-white/10 text-white font-medium transition-colors hover:border-white/30 hover:bg-white/5 disabled:opacity-0
+                        `}
+                    >
+                        Zurück
+                    </button>
+                    <button
+                        onClick={handleNext}
+                        disabled={!formData[currentQuestion? currentQuestion.id : ''] && currentQuestion?.type !== 'multiselect'} 
+                        className="px-6 py-3 rounded-full bg-[#161b22] border border-white/10 text-white font-medium transition-colors hover:border-white/30 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {filteredQuestions && currentStep === filteredQuestions.length - 1 ? "Auswertung" : "Weiter"}
+                    </button>
+                </>
+              )}
+              
+             {showEmailGate && (
+                 <button onClick={handleBack} className="w-full text-center text-sm text-white/40 hover:text-white transition-colors">
+                     Zurück zur Überprüfung
+                 </button>
+             )}
+          </div>
+      </div>
 
     </div>
   );

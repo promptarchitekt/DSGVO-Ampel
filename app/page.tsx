@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Shield, Gauge, Brain } from "lucide-react";
+import { Shield, Gauge, Brain, FileText } from "lucide-react";
 
-const cards = [
+const tools = [
   {
     href: "/dsgvo-ampel",
     title: "DSGVO Ampel",
     description:
       "Geführte Fragen, Sofortbewertung und To-do-Liste für Datenschutz-Projekte.",
     icon: Gauge,
-    accent: "from-emerald-300/40 to-emerald-600/30"
+    target: "_self"
   },
   {
     href: "/ki-kompetenztest",
@@ -18,7 +18,24 @@ const cards = [
     description:
       "Skills-Check in drei Levels zum EU AI Act inkl. Lernmodus und Tipps.",
     icon: Brain,
-    accent: "from-sky-300/40 to-sky-600/30"
+    target: "_self"
+  }
+];
+
+const offers = [
+  {
+    href: "/offers/02_pa-offer-dsgvo-v1.html",
+    title: "DSGVO Pitch",
+    description: "Das Pitch Deck zur DSGVO Ampel. Alle Details, Preise und Prozess.",
+    icon: FileText,
+    target: "_blank"
+  },
+  {
+    href: "/offers/01_pa-offer-v8.html",
+    title: "Time Value Pitch",
+    description: "Das Pitch Deck zu KI-Workflows und Automation.",
+    icon: FileText,
+    target: "_blank"
   }
 ];
 
@@ -56,12 +73,14 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Main Tools */}
       <section className="grid gap-6 md:grid-cols-2">
-        {cards.map((card) => (
+        {tools.map((card) => (
           <Link
             key={card.href}
             href={card.href}
             className="group pa-card"
+            target={card.target}
           >
             <card.icon className="relative z-10 h-10 w-10 text-[var(--pa-cyan)]" />
             <h2 className="pa-card-title relative z-10 mt-4 text-2xl font-semibold">
@@ -71,6 +90,28 @@ export default function HomePage() {
             <span className="pa-card-link relative z-10 mt-6">
               Tool öffnen
             </span>
+          </Link>
+        ))}
+      </section>
+
+      {/* Offers - Narrower Height, Same Grid Width */}
+      <section className="grid gap-6 md:grid-cols-2">
+        {offers.map((card) => (
+          <Link
+            key={card.href}
+            href={card.href}
+            className="group pa-card !py-4 !px-6 flex items-center"
+            target={card.target}
+          >
+            <div className="flex items-center gap-4 w-full">
+              <card.icon className="relative z-10 h-6 w-6 text-[var(--pa-cyan)] shrink-0" />
+              <div>
+                <h2 className="pa-card-title relative z-10 text-lg font-semibold">
+                  {card.title}
+                </h2>
+                <p className="pa-card-text relative z-10 text-sm text-[var(--pa-muted)]">{card.description}</p>
+              </div>
+            </div>
           </Link>
         ))}
       </section>

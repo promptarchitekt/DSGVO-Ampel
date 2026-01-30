@@ -46,6 +46,7 @@ export const calculateAmpel = (formData: any): AmpelResult => {
     }
 
     // EU-KI-Akt
+    // EU-KI-Akt
     if (formData.kiKompetenz === "nein") {
       results.euKiAkt.status = "red";
       results.euKiAkt.issues.push("KI-Schulung fehlt");
@@ -58,6 +59,26 @@ export const calculateAmpel = (formData: any): AmpelResult => {
       results.euKiAkt.details.push(
         "Alle betroffenen Mitarbeiter schulen und jährlich auffrischen."
       );
+    }
+
+    if (formData.kiRichtlinie === "nein") {
+      results.euKiAkt.status = "red";
+      results.euKiAkt.issues.push("KI-Richtlinie fehlt");
+      results.euKiAkt.details.push(
+        "Mitarbeiter benötigen schriftliche Regeln (Policy) zur KI-Nutzung, um Haftungsrisiken zu vermeiden."
+      );
+    }
+
+    if (formData.kiDatenInput === "ja") {
+      results.euKiAkt.status = "red";
+      results.euKiAkt.issues.push("Datenabfluss-Risiko");
+      results.euKiAkt.details.push(
+        "Eingabe von Personendaten in 'offene' KI-Tools ist meist ein DSGVO-Verstoß! Verbot oder Enterprise-Lösung nötig."
+      );
+    } else if (formData.kiDatenInput === "unsicher") {
+        results.euKiAkt.status = results.euKiAkt.status === "red" ? "red" : "yellow";
+        results.euKiAkt.issues.push("Input-Verhalten prüfen");
+        results.euKiAkt.details.push("Prüfen Sie dringend, welche Daten Ihre Mitarbeiter in KI-Tools eingeben.");
     }
 
     // BFSG
@@ -167,6 +188,24 @@ export const getTopTodos = (formData: any): Todo[] => {
         deadline: "Bis 02.02.2025",
         link: "https://www.bundesnetzagentur.de/DE/Beschlusskammern/Beschlusskammer1/KI/KI-Kompetenz.html",
       });
+    }
+
+    if (formData.kiRichtlinie === "nein") {
+        todos.push({
+            priority: "red",
+            title: "KI-Richtlinie (Policy) erstellen",
+            description: "Schriftliche Anweisung für Mitarbeiter zur sicheren KI-Nutzung",
+            deadline: "Sofort",
+        });
+    }
+
+    if (formData.kiDatenInput === "ja" || formData.kiDatenInput === "unsicher") {
+        todos.push({
+            priority: "red",
+            title: "KI-Dateneingabe regeln (DLP)",
+            description: "Verbot der Eingabe personenbezogener Daten in offene KI-Tools durchsetzen",
+            deadline: "Sofort",
+        });
     }
 
     // BFSG

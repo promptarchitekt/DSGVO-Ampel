@@ -1,0 +1,25 @@
+# Task: Repo Comparison with Commit 13d4547
+
+- [x] Analyze differences between current state and commit 13d4547 <!-- id: 0 -->
+    - [x] List changed files <!-- id: 1 -->
+    - [x] Compare page layout and styles <!-- id: 2 -->
+    - [x] Document functional changes and new features <!-- id: 3 -->
+- [x] Refine UI Flow and Content (Expert Audit Jan 2026) <!-- id: 5 -->
+    - [x] Research latest legal updates (DSGVO, AI Act, GoBD, BFSG) <!-- id: 6 -->
+    - [x] Explicit UX/UI Audit (2026 Developer Standards) <!-- id: 10 -->
+    - [x] Refine plan for mobile-first simplicity <!-- id: 11 -->
+    - [x] Define business model & lead strategy <!-- id: 12 -->
+    - [x] Create implementation documents (E-Mail Gate + PDF CTAs) <!-- id: 14 -->
+    - [x] Optimize UI layout (mobile-first centered flow) <!-- id: 7 -->
+    - [x] Fix Card Overflow & Scrolling Issues <!-- id: 16 -->
+    - [x] Implement InfoModal for cleaner details <!-- id: 17 -->
+    - [x] Consolidate UI Icons with Portal Theme <!-- id: 18 -->
+    - [x] Fix Broken External Links (AVV Bitkom/Checklists) <!-- id: 19 -->
+    - [x] Implement Link Validation Script (`npm run check-links`) <!-- id: 20 -->
+    - [x] Refine PDF report (structure, formatting, download UX) <!-- id: 9 -->
+    - [x] Implement AI Policy Bonus Page (Value Add) <!-- id: 21 -->
+    - [x] Implement lead generation touchpoints <!-- id: 13 -->
+    - [x] Code Refactoring (Modular Components, Utils extraction)
+    - [x] Fix Build System & Global Styles <!-- id: 15 -->
+    - [ ] Fine-tune content and expert advice <!-- id: 8 -->
+- [ ] Provide comprehensive content-based summary to user <!-- id: 4 -->

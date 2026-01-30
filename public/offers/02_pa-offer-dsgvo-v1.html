@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DSGVO Ampel | Pitch Deck (v1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --bg: #000000;
+            --text-main: #ffffff;
+            --text-dim: #bbbbbb; 
+            --cyan: #00faff;
+            --gold: #ffc300;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 120px 100px; /* Locked Top Position */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Option B: Fixed Header */
+        }
+        .slide.active { opacity: 1; visibility: visible; }
+        
+        /* Typography System */
+        .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--cyan);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 80px;
+            font-weight: 800;
+            letter-spacing: -3.5px;
+            line-height: 0.95;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+        
+        p {
+            font-size: 24px;
+            line-height: 1.4;
+            color: var(--text-dim);
+            max-width: 900px;
+            letter-spacing: -0.2px;
+        }
+        
+        .gold { color: var(--gold); }
+        .white { color: #fff; }
+        .block-link { display: block; margin-top: 16px; }
+
+        /* Grid System (No Cards) */
+        .col-3 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 60px; /* More whitespace */
+            margin-top: 60px;
+            border-top: 1px solid #333; /* Brighter separator */
+            padding-top: 40px;
+        }
+        
+        .col-item h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #888; 
+            margin-bottom: 16px;
+        }
+        
+        .col-item .headline {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        
+        .col-item p {
+            font-size: 18px;
+            color: #cccccc; 
+            line-height: 1.5;
+        }
+        
+        .price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        
+        /* Lists (Bulletless) */
+        ul.clean-list { list-style: none; margin-bottom: 40px; }
+        ul.clean-list li {
+            font-size: 28px;
+            color: #888;
+            margin-bottom: 16px;
+            padding-left: 24px;
+            position: relative;
+        }
+        ul.clean-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #333;
+        }
+
+        /* Nav */
+        .nav { position: fixed; bottom: 40px; right: 100px; display: flex; gap: 20px; }
+        .btn { 
+            background: none; 
+            border: none; 
+            color: var(--cyan); 
+            font-family: 'JetBrains Mono'; 
+            cursor: pointer; 
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .btn:hover { color: #fff; text-shadow: 0 0 8px rgba(0, 250, 255, 0.4); }
+        .btn:active { color: var(--gold); transition: none; }
+        
+        .sub {
+             font-family: 'JetBrains Mono';
+             color: var(--cyan);
+             font-size: 16px; 
+             letter-spacing: 1px;
+             text-transform: uppercase;
+        }
+       /* Grid for simple slides */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+        .grid div h3 {
+             font-family: 'JetBrains Mono';
+             font-size: 14px;
+             color: var(--cyan);
+             margin-bottom: 12px;
+             text-transform: uppercase;
+        }
+        .grid div p {
+            font-size: 20px;
+            color: #cccccc;
+        }
+        
+        .big-text {
+             font-size: 40px;
+             font-weight: 600;
+             line-height: 1.2;
+             letter-spacing: -1px;
+             color: #fff;
+        }
+
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Intro -->
+<div class="slide active">
+    <h1>DSGVO AMPEL</h1>
+    <span class="sub">COMPLIANCE-STATUS IN 2 MINUTEN</span>
+</div>
+
+<!-- Slide 2: Diagnosis (Pain) -->
+<div class="slide">
+    <span class="label">01 / STATUS QUO</span>
+    <h1>Unsicherheit kostet Nerven.</h1>
+    <div class="grid">
+        <div>
+            <h3 style="color:var(--cyan)">RISIKO</h3>
+            <p>Abmahnwellen und Bußgelder bedrohen die Existenz. Niemand weiß genau, wo er steht.</p>
+        </div>
+        <div>
+            <h3 style="color:var(--cyan)">ZEIT</h3>
+            <p>Recherche frisst Stunden. VVT, AVV, Impressum – wer blickt da noch durch?</p>
+        </div>
+        <div>
+            <h3 style="color:var(--cyan)">DEADLINE</h3>
+            <p>NIS2 steht vor der Tür (06.03.2026). Handlungszwang steigt.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Logic (The System) -->
+<div class="slide">
+    <span class="label">02 / LOGIK</span>
+    <h1>Das Ampel-Prinzip.</h1>
+    <p class="big-text">
+        Rot ist <span style="color: #ff4444">KRITISCH</span>. Gelb ist <span style="color: var(--gold)">WARNUNG</span>. Grün ist <span style="color: var(--cyan)">SICHER</span>.<br>
+        Wir transformieren Komplexität in Klarheit.
+    </p>
+</div>
+
+<!-- Slide 4: Solution (The Machine) -->
+<div class="slide">
+    <span class="label">03 / LÖSUNG</span>
+    <h1>Automatisierte Prüfung.</h1>
+    <div class="grid">
+        <div class="col-item">
+            <h3>CHECK</h3>
+            <p>Intelligenter Fragebogen analysiert Ihren Status.</p>
+        </div>
+        <div class="col-item">
+            <h3>REPORT</h3>
+            <p>Sofortige Auswertung mit konkreten <span class="gold">Handlungsempfehlungen</span>.</p>
+        </div>
+        <div class="col-item">
+            <h3>LÖSUNG</h3>
+            <p>Verstehen, was fehlt. Sofort beheben.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Offer (Premium) -->
+<div class="slide">
+    <span class="label">04 / ANGEBOT</span>
+    <h1>Premium Vorlagen.</h1>
+    <div class="grid">
+        <div>
+            <h3>VVT & AVV</h3>
+            <p>Vorgefertigte Muster. Ausfüllen in 30 Minuten statt 3 Wochen.</p>
+        </div>
+        <div>
+            <h3>RECHTS-SICHER</h3>
+            <p>Vom Experten geprüft. Aktuell und wasserdicht.</p>
+        </div>
+        <div>
+             <h3>EFFIZIENT</h3>
+             <p>Kein Anwalts-Blabla. Klare To-Dos.</p>
+        </div>
+    </div>
+    <div style="margin-top: 60px;">
+        <span class="price">€149</span>
+        <span class="sub" style="display:block; margin-top:10px; font-size: 14px; opacity: 0.6;">EINMALZAHLUNG (NETTO)</span>
+    </div>
+</div>
+
+<!-- Slide 6: Upsell (Consulting) -->
+<div class="slide">
+    <span class="label">05 / EXPERTISE</span>
+    <h1>Persönliche Beratung.</h1>
+    <p class="big-text">
+        Für komplexe Fälle und individuelle Roadmaps.<br>
+        <span style="font-size: 24px; color: #888;">Ab €990 oder auf Stundenbasis.</span>
+    </p>
+</div>
+
+<!-- Slide 7: Process -->
+<div class="slide">
+    <span class="label">06 / PROZESS</span>
+    <h1>Ihr Weg zu Grün.</h1>
+    <div class="grid">
+        <div>
+            <span style="color:var(--cyan); font-family:'JetBrains Mono'">01</span>
+            <h3>GRATIS CHECK</h3>
+            <p>Status ermitteln via Ampel-Tool.</p>
+        </div>
+        <div>
+            <span style="color:var(--cyan); font-family:'JetBrains Mono'">02</span>
+            <h3>VORLAGEN NUTZEN</h3>
+            <p>Lücken schließen mit Premium-Dokumenten.</p>
+        </div>
+         <div>
+            <span style="color:var(--cyan); font-family:'JetBrains Mono'">03</span>
+            <h3>ZERTIFIZIERT</h3>
+            <p>Sicher dokumentieren und ruhig schlafen.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Contact / Card -->
+<div class="slide">
+    <span class="label">08 / CONTACT</span>
+    <h1>Starten Sie jetzt.</h1>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; max-width: 1000px;">
+        <!-- Left: Contact Data -->
+        <div>
+            <div style="margin-bottom: 40px;">
+                <h3 style="font-size: 32px; color: #fff; margin-bottom: 8px;">DSGVO AMPEL</h3>
+                <span style="font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 16px; letter-spacing: 1px;">POWERED BY PROMPT ARCHITEKT</span>
+            </div>
+            
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 24px;">
+                <li>
+                    <span style="display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: #666; margin-bottom: 4px;">HOME / WEB</span>
+                    <a href="/" style="color: #fff; font-size: 24px; text-decoration: none; border-bottom: 1px solid #333;">← Zur Startseite</a>
+                </li>
+                <li>
+                    <span style="display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: #666; margin-bottom: 4px;">EMAIL</span>
+                    <a href="mailto:info@promptarchitekt.de" style="color: #fff; font-size: 24px; text-decoration: none; border-bottom: 1px solid #333;">info@promptarchitekt.de</a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Right: QR Code (No Border) -->
+        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
+            <div>
+                <img src="../images/525-kontakt.png" alt="QR Code" style="width: 250px; height: 250px; display: block;">
+            </div>
+            <a href="/dsgvo-ampel" style="font-family: 'JetBrains Mono'; color: #666; font-size: 14px; margin-top: 20px; text-decoration: none; cursor: pointer;">
+                <span style="color: var(--gold);">→</span> CHECK STARTEN
+            </a>
+        </div>
+    </div>
+    
+    <!-- Legal Footer -->
+    <div style="position: absolute; bottom: 40px; left: 100px; right: 100px; text-align: left;">
+         <span style="font-family: 'JetBrains Mono'; font-size: 10px; color: #444;">
+            © 2026 <span style="color: var(--cyan); font-weight: 600;">PROMPT</span> <span style="color: #999;">ARCHITEKT</span> | Alle Rechte vorbehalten
+         </span>
+    </div>
+</div>
+
+<div class="nav">
+    <button class="btn" id="prev">PREV</button>
+    <button class="btn" id="next">NEXT</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    
+    function update() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    }
+    
+    document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+    document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+    document.addEventListener('keydown', e => {
+        if(e.key === 'ArrowRight') document.getElementById('next').click();
+        if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+    });
+</script>
+</body>
+</html>

@@ -227,6 +227,75 @@ export const questions: Question[] = [
     },
   },
   {
+    id: "kiRichtlinie",
+    category: "EU-KI-Akt",
+    title: "Gibt es eine schriftliche 'KI-Richtlinie' für Mitarbeiter (Do's & Don'ts)?",
+    type: "radio",
+    options: [
+      {
+        value: "ja",
+        label: "Ja, ist etabliert",
+        icon: CheckCircle,
+        color: "text-green-600",
+      },
+      {
+        value: "nein",
+        label: "Nein, nichts Schriftliches",
+        icon: XCircle,
+        color: "text-red-600",
+      },
+      {
+        value: "in_arbeit",
+        label: "In Arbeit",
+        icon: AlertCircle,
+        color: "text-yellow-600",
+      },
+    ],
+    helpText: "Ohne Regeln droht Abfluss von Geschäftsgeheimnissen (Samsung-Fall) oder DSGVO-Verstoß.",
+    condition: (data) =>
+      data.useCase === "ki_system" || data.useCase === "intern",
+    infoCard: {
+      title: "📜 Warum eine KI-Richtlinie?",
+      content:
+        "Mitarbeiter nutzen KI oft 'Schatten-IT'. Eine Richtlinie klärt: Welches Tool darf genutzt werden? Dürfen Kundendaten eingegeben werden? (Meistens: NEIN!). Wer haftet bei Fehlern? Ohne Richtlinie haften Sie als Geschäftsführer für Datenschutzverstöße.",
+      links: [
+        {
+          text: "Muster KI-Richtlinie (Microsoft)",
+          url: "https://www.microsoft.com/de-de/worklab",
+        },
+      ],
+    },
+  },
+  {
+    id: "kiDatenInput",
+    category: "EU-KI-Akt",
+    title: "Dürfen Mitarbeiter personenbezogene Daten (Namen, Adressen) in KI-Tools eingeben?",
+    type: "radio",
+    options: [
+      {
+        value: "verboten",
+        label: "Nein, strikt verboten (oder Enterprise-Version)",
+        icon: CheckCircle,
+        color: "text-green-600",
+      },
+      {
+        value: "ja",
+        label: "Ja / Wird gemacht",
+        icon: XCircle,
+        color: "text-red-600",
+      },
+      {
+        value: "unsicher",
+        label: "Nicht geregelt / Unsicher",
+        icon: AlertCircle,
+        color: "text-yellow-600",
+      },
+    ],
+    helpText: "Kostenlose KI-Tools nutzen Eingaben oft zum Training -> DSGVO-Verstoß!",
+    condition: (data) =>
+      data.useCase === "ki_system" || data.useCase === "intern",
+  },
+  {
     id: "kiKompetenz",
     category: "EU-KI-Akt - Schulung",
     title:

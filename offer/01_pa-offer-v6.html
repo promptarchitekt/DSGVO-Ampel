@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prompt Architekt | Solo-Lösung (v6)</title>
+<style>
+        :root {
+            --vantablack: #020609;
+            --cyan: #00faff;
+            --gray: #a0aec0;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #ffc300;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--vantablack);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            position: relative;
+        }
+        .slide {
+            position: absolute;
+            inset: 0;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 60px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(30px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .brand { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .brand span { color: var(--cyan); }
+        .brand i { font-style: italic; font-weight: 400; color: var(--gray); }
+        .slogan { color: var(--gray); font-size: 14px; margin-bottom: 40px; }
+        h1 { font-size: 64px; font-weight: 800; letter-spacing: -2px; margin-bottom: 16px; line-height: 1.1; }
+        h2 { font-size: 48px; color: var(--cyan); margin-bottom: 24px; }
+        p { font-size: 24px; line-height: 1.4; color: #e2e8f0; max-width: 900px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 32px; }
+        
+        /* v3 Card Style - Lighter, Glassier */
+        .card { background: rgba(0, 250, 255, 0.05); border: 1px solid rgba(0, 250, 255, 0.1); padding: 32px; border-radius: 24px; }
+        .card h3 { color: var(--cyan); font-size: 18px; margin-bottom: 12px; text-transform: uppercase; }
+        
+        .nav { position: fixed; bottom: 40px; right: 40px; display: flex; gap: 16px; }
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: 1px solid var(--cyan);
+            background: transparent;
+            color: var(--cyan);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .btn:hover { background: rgba(0, 250, 255, 0.1); }
+        .counter { position: fixed; bottom: 48px; left: 40px; font-size: 14px; color: var(--gray); font-family: monospace; }
+        .progress { position: fixed; top: 0; left: 0; height: 4px; background: var(--cyan); transition: 0.3s; }
+    
+        .gold { color: var(--gold); font-weight: 800; }
+        .muted { color: var(--gray); }
+        .small { font-size: 18px; }
+        .price { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 8px; display:block; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter">1 / 7</div>
+<div class="container">
+
+<!-- Slide 1: Positionierung -->
+<div class="slide active">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <div class="slogan">Solo-Zeitfresser-Lösung: Finale Version</div>
+    <h1>Zeit zurück für Kunden.</h1>
+    <p>„Ich baue Solo-Selbstständigen einfache <span class="gold">KI-Abläufe</span> für ihre größten Zeitfresser – damit mehr Zeit für Kunden bleibt.“</p>
+</div>
+
+<!-- Slide 2: Situation -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Deine Situation</h2>
+    <p>Du bist Dienstleister/Berater/Coach und verlierst wöchentlich Zeit mit:</p>
+    <div class="grid-3">
+        <div class="card">
+            <h3>Anfragen</h3>
+            <p class="small">Ewiges E-Mail-Ping-Pong & Terminsuche.</p>
+        </div>
+        <div class="card">
+            <h3>Calls</h3>
+            <p class="small">Notizen ausarbeiten, Summaries schreiben.</p>
+        </div>
+        <div class="card">
+            <h3>Content</h3>
+            <p class="small">Planung und „was poste ich heute?“</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Angebot -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Angebot</h2>
+    <p>Klar, preislich fix, lieferbar.</p>
+    <div class="grid-3">
+        <div class="card">
+            <h3>Zeitfresser-Check</h3>
+            <span class="price">197 €</span>
+            <p class="small">Top-2-Prozesse + 1-Seiten-Plan.<br><i>(30 Min Call + 24h PDF)</i></p>
+        </div>
+        <div class="card" style="border-color: var(--gold); background: rgba(255, 195, 0, 0.05);">
+            <h3 style="color: var(--gold)">Workflow-Sprint</h3>
+            <span class="price">697 €</span>
+            <p class="small">1 kompletter Ablauf: Prompt + Test + Anleitung.<br><i>(7 Tage)</i></p>
+        </div>
+        <div class="card">
+            <h3>Monats-Paket</h3>
+            <span class="price">297 €</span>
+            <p class="small">1 neuer Ablauf/Monat + Support.<br><i>(Laufend)</i></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Die 3 Abläufe -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Die 3 bewährtesten Abläufe</h2>
+    <div class="grid-3">
+        <div class="card">
+            <h3>1. Anfragen → Termin</h3>
+            <p class="small">E-Mail rein → 3 Fragen beantwortet → Kalender-Link raus.<br><br><span class="gold">2 Min statt 15 Min.</span></p>
+        </div>
+        <div class="card">
+            <h3>2. Call → Action</h3>
+            <p class="small">10 Bulletpoints → Zusammenfassung + To-dos + Follow-up.<br><br><span class="gold">3 Min statt 20 Min.</span></p>
+        </div>
+        <div class="card">
+            <h3>3. Content aus Notizen</h3>
+            <p class="small">5 Stichpunkte → LinkedIn-Post + Newsletter-Teil.<br><br><span class="gold">7 Min statt 45 Min.</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Ablauf -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Ablauf (3 Schritte)</h2>
+    <div class="grid-3">
+        <div class="card">
+            <h3>1. Input</h3>
+            <p class="small">DU schickst 2-3 Beispiele (Mail, Notiz, Vorlage).</p>
+        </div>
+        <div class="card">
+            <h3>2. Bau</h3>
+            <p class="small">ICH liefere Workflow + 3 Testfälle (innerhalb 48h).</p>
+        </div>
+        <div class="card">
+            <h3>3. Go</h3>
+            <p class="small">DU testest → Freigabe → läuft.</p>
+        </div>
+    </div>
+    <p class="small" style="margin-top: 24px;">Technik: ChatGPT + deine Tools (Notion/Gmail). Du behältst <span class="gold">100% Kontrolle</span>.</p>
+</div>
+
+<!-- Slide 6: Website Hero -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Website Hero (Copy-Paste)</h2>
+    <div class="card" style="text-align: center; max-width: 800px; margin: 0 auto; background: rgba(0,0,0,0.3);">
+        <h1 style="font-size: 48px; margin-bottom: 20px;">Zeit für Kunden statt Tipparbeit</h1>
+        <p style="font-size: 24px; color: var(--cyan); margin-bottom: 30px;">Anfragen schneller → Calls direkt actionable → Content aus Notizen</p>
+        <div style="background: var(--gold); color: #000; padding: 16px 32px; display: inline-block; font-weight: 800; border-radius: 8px;">
+            ZEITFRESSER-CHECK | 197 € | 24h Ergebnis
+        </div>
+    </div>
+</div>
+
+<!-- Slide 7: CTA -->
+<div class="slide">
+    <div class="brand"><span>PROMPT</span> <i>ARCHITEKT</i></div>
+    <h2>Start: LinkedIn/DM</h2>
+    <p>„Welcher Prozess kostet dich wöchentlich Zeit?<br>
+    • Anfragen?<br>
+    • Calls?<br>
+    • Content?</p>
+    <p style="margin-top:20px;">Schick mir 1 Beispiel → ich zeige dir in 24h den Workflow.“</p>
+    <br>
+    <div class="card" style="display:inline-block; border-color: var(--gold);">
+        <h3 style="color:var(--gold); margin:0;">[197 € | 1-Seiten-Plan | direkt nutzbar]</h3>
+    </div>
+</div>
+
+</div>
+<div class="nav">
+<button class="btn" id="prev">Zurück</button>
+<button class="btn" id="next">Weiter</button>
+</div>
+<script>
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        const progress = document.getElementById('progress');
+        const counter = document.getElementById('counter');
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            progress.style.width = ((current + 1) / total * 100) + '%';
+            counter.innerText = (current + 1) + ' / ' + total;
+        }
+        document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+        document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowRight') document.getElementById('next').click();
+            if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+        });
+    </script>
+</body>
+</html>

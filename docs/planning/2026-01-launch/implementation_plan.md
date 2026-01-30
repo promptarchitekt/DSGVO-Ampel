@@ -146,6 +146,17 @@ Optimize the user interface and content for a professional, focused expert-inter
 
 ### [PDF Export] Compliance Report Generation
 
+#### [NEW] High-Value Content Features
+- **AI Policy Bonus Page**: 
+    - Condition: If AI Compliance != Green
+    - Action: Injects a "First Aid" Policy Template (1 Page) as the last page.
+    - Value: Instant resolution of a critical gap (€99 value included).
+- **Upgrade Boxes**:
+    - Visual Call-to-Action (CTA) boxes for critical issues.
+    - Links to "Premium Templates" or "Consulting Booking".
+- **CI/CD Styling**:
+    - Refactored `pdfGenerator` to use CI Colors (Indigo/Slate) instead of plain black/white.
+
 #### [MODIFY] [page.tsx - generatePDF function](file:///c:/pa/07-dev-play/09-DSGVO-Ampel/app/dsgvo-ampel/page.tsx)
 - **Structure & Content**:
     - **Header**: Professional branding with "DSGVO Compliance QuickCheck" + Date + Company/Name (if provided)

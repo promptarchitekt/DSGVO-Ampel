@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prompt Architekt | Solo-Lösung (v7 Pitch Deck)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --bg: #050505; /* Deep Black/Grey */
+            --card-bg: #0a0a0a;
+            --cyan: #00faff;
+            --cyan-dim: rgba(0, 250, 255, 0.4);
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --border: rgba(255, 255, 255, 0.08);
+            --gold: #ffc300;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Layout: Fullscreen Slides, No Frames */
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 80px 120px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: scale(0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        /* Typography: Expert Physics */
+        .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--cyan);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: block;
+        }
+        
+        h1 {
+            font-size: 80px;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1;
+            margin-bottom: 32px;
+            color: #fff;
+        }
+        
+        h2 {
+            font-size: 56px;
+            font-weight: 600;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+        
+        p {
+            font-size: 24px;
+            line-height: 1.5;
+            color: #a1a1a1;
+            max-width: 800px;
+            letter-spacing: -0.01em;
+        }
+        
+        .gold { color: var(--gold); font-weight: 600; }
+        .white { color: #fff; }
+
+        /* Component: Minimal Cards */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .card:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+        
+        .card-title-large {
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .card p {
+            font-size: 18px;
+            color: #888;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .price-tag {
+            font-size: 32px;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: -1px;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 16px;
+            z-index: 100;
+        }
+        .btn-nav {
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-nav:hover { border-color: #666; }
+        
+        .slide-counter {
+            position: fixed;
+            bottom: 48px;
+            left: 60px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #444;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .slide { padding: 40px 24px; overflow-y: auto; display: block; }
+            h1 { font-size: 48px; }
+            h2 { font-size: 36px; }
+            .grid, .grid-3 { grid-template-columns: 1fr; gap: 16px; }
+            .controls { bottom: 20px; right: 20px; }
+            .slide-counter { bottom: 28px; left: 24px; }
+        }
+</style>
+</head>
+<body>
+
+<div class="slide-counter" id="counter">01 / 07</div>
+
+<!-- Slide 1: Positionierung -->
+<div class="slide active">
+    <!-- Clean, Dark, Typography Focused -->
+    <span class="meta">ARCHITEKTUR</span>
+    <h1>Zeit zurück für Kunden.</h1>
+    <p style="font-size: 32px; max-width: 1000px; color: #fff;">
+        „Ich baue Solo-Selbstständigen einfache <span class="gold">KI-Abläufe</span> für ihre größten Zeitfresser – damit mehr Zeit für Kunden bleibt.“
+    </p>
+</div>
+
+<!-- Slide 2: Situation (Diagnostic) -->
+<div class="slide">
+    <span class="meta">DIAGNOSTIC</span>
+    <h2>Der größte Hebel?</h2>
+    <p>Wo verlierst du jede Woche Stunden?</p>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h3>PAIN 01</h3>
+            <div class="card-title-large">Anfragen</div>
+            <p>Ewiges Ping-Pong & Terminsuche.</p>
+        </div>
+        <div class="card">
+            <h3>PAIN 02</h3>
+            <div class="card-title-large">Calls</div>
+            <p>Notizen ausarbeiten, Summaries tippen.</p>
+        </div>
+        <div class="card">
+            <h3>PAIN 03</h3>
+            <div class="card-title-large">Content</div>
+            <p>Planung und „was poste ich heute?“</p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Angebot (Pricing) -->
+<div class="slide">
+    <span class="meta">PRICING</span>
+    <h2>Das Angebot.</h2>
+    <p>Klar. Fixpreis. Lieferbar.</p>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h3>DIAGNOSE</h3>
+            <span class="price-tag">197 €</span>
+            <div class="card-title-large">Zeitfresser-Check</div>
+            <p>Top-2-Prozesse + Plan.<br><i>(30 Min Call + 24h PDF)</i></p>
+        </div>
+        <div class="card" style="border-color: var(--gold); background: rgba(255, 195, 0, 0.03);">
+            <h3 style="color: var(--gold);">CONSTRUCTION</h3>
+            <span class="price-tag" style="color: var(--gold);">697 €</span>
+            <div class="card-title-large">Workflow-Sprint</div>
+            <p>1 kompletter Ablauf.<br><i>(Prompt + Test + Anleitung)</i></p>
+        </div>
+        <div class="card">
+            <h3>RETAINER</h3>
+            <span class="price-tag">297 €</span>
+            <div class="card-title-large">Monats-Paket</div>
+            <p>1 neuer Ablauf/Monat.<br><i>(Laufend + Support)</i></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: Die 3 Abläufe (Examples) -->
+<div class="slide">
+    <span class="meta">BLUEPRINTS</span>
+    <h2>Die Lösungen.</h2>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h3>01 INTAKE</h3>
+            <div class="card-title-large">Anfragen → Termin</div>
+            <p>Mail rein → 3 Fragen → Link raus.<br><br><span class="gold">2 Min statt 15 Min.</span></p>
+        </div>
+        <div class="card">
+            <h3>02 PROCESSING</h3>
+            <div class="card-title-large">Call → Action</div>
+            <p>10 Bullets → Summary + To-Dos.<br><br><span class="gold">3 Min statt 20 Min.</span></p>
+        </div>
+        <div class="card">
+            <h3>03 OUTPUT</h3>
+            <div class="card-title-large">Notiz → Content</div>
+            <p>5 Stichpunkte → Post + Newsletter.<br><br><span class="gold">7 Min statt 45 Min.</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 5: Ablauf 3-Schritte (Process) -->
+<div class="slide">
+    <span class="meta">PROCESS</span>
+    <h2>Wie wir arbeiten.</h2>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h3>STEP 1</h3>
+            <div class="card-title-large">Input</div>
+            <p>DU schickst 2-3 Beispiele (Mail, Notiz).</p>
+        </div>
+        <div class="card">
+            <h3>STEP 2</h3>
+            <div class="card-title-large">Bau</div>
+            <p>ICH liefere Workflow + 3 Testfälle (48h).</p>
+        </div>
+        <div class="card">
+            <h3>STEP 3</h3>
+            <div class="card-title-large">Go</div>
+            <p>DU testest → Freigabe → läuft.</p>
+        </div>
+    </div>
+    <div style="margin-top: 40px; padding: 20px; background: #0f0f0f; border-left: 2px solid var(--gold); border-radius: 4px; display: inline-block;">
+        <span style="font-family: 'JetBrains Mono'; font-size: 13px; color: #666; display: block; margin-bottom: 4px;">TECHNIK</span>
+        <span style="color: #fff; font-size: 16px;">ChatGPT + Deine Tools. Du behältst <span class="gold">100% Kontrolle</span>.</span>
+    </div>
+</div>
+
+<!-- Slide 6: Website Hero (Asset) -->
+<div class="slide">
+    <span class="meta">ASSET PREVIEW</span>
+    <h2>Website Hero (Copy-Paste)</h2>
+    
+    <div style="background: #000; border: 1px solid #222; padding: 60px; border-radius: 8px; max-width: 900px; text-align: center;">
+        <h1 style="font-size: 56px; margin-bottom: 24px;">Zeit für Kunden statt Tipparbeit.</h1>
+        <p style="font-size: 20px; color: var(--cyan); margin-bottom: 40px; font-family: 'JetBrains Mono';">Anfragen schneller → Calls direkt actionable → Content aus Notizen</p>
+        <button style="background: var(--gold); color: #000; border: none; padding: 16px 32px; font-weight: 700; font-size: 16px; cursor: pointer;">
+            ZEITFRESSER-CHECK | 197 €
+        </button>
+    </div>
+</div>
+
+<!-- Slide 7: CTA -->
+<div class="slide">
+    <span class="meta">START</span>
+    <h1 style="margin-bottom: 40px;">Welcher Prozess<br>nervt dich?</h1>
+    
+    <div style="font-size: 24px; color: #888; margin-bottom: 40px; line-height: 1.6;">
+        • Anfragen beantworten?<br>
+        • Call-Notizen tippen?<br>
+        • Content planen?
+    </div>
+    
+    <p style="color: #fff; font-size: 28px; margin-bottom: 40px;">
+        Schick mir 1 Beispiel → <span class="gold">Lösung in 24h.</span>
+    </p>
+    
+    <a href="#" style="text-decoration: none; border-bottom: 1px solid var(--cyan); color: var(--cyan); padding-bottom: 4px; font-family: 'JetBrains Mono'; font-size: 14px;">
+        LINKEDIN DM / EMAIL
+    </a>
+</div>
+
+<div class="controls">
+    <button class="btn-nav" id="prev">PREV</button>
+    <button class="btn-nav" id="next">NEXT</button>
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const counter = document.getElementById('counter');
+    
+    function update() {
+        slides.forEach((s, i) => {
+            s.classList.toggle('active', i === current);
+        });
+        counter.innerHTML = `0${current + 1} / 0${total}`;
+    }
+    
+    document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+    document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+    document.addEventListener('keydown', e => {
+        if(e.key === 'ArrowRight') document.getElementById('next').click();
+        if(e.key === 'ArrowLeft') document.getElementById('prev').click();
+    });
+</script>
+</body>
+</html>
