@@ -321,7 +321,9 @@
         <div>
             <div style="margin-bottom: 40px;">
                 <h3 style="font-size: 32px; color: #fff; margin-bottom: 8px;">Marcel Reichl</h3>
-                <span style="font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 16px; letter-spacing: 1px;">PROMPT ARCHITEKT</span>
+                <span style="font-family: 'JetBrains Mono'; color: var(--cyan); font-size: 16px; letter-spacing: 1px;">
+                    <span style="color:var(--cyan)">PROMPT</span> <span style="color:#fff">ARCHITEKT</span>
+                </span>
             </div>
             
             <ul style="list-style: none; display: flex; flex-direction: column; gap: 24px;">
@@ -359,7 +361,7 @@
                     <!-- Fixed Local QR Code -->
                     <img src="../images/525-kontakt.png" alt="QR Code" style="width: 250px; height: 250px; display: block;">
                 </div>
-                <a href="mailto:info@promptarchitekt.de" style="font-family: 'JetBrains Mono'; color: #666; font-size: 14px; margin-top: 20px; text-decoration: none; cursor: pointer;">
+                <a href="mailto:info@promptarchitekt.de" style="font-family: 'JetBrains Mono'; color: var(--gold); font-size: 14px; margin-top: 20px; text-decoration: none; cursor: pointer;">
                     <span style="color: var(--gold);">→</span> SCANNEN & VERNETZEN
                 </a>
             </div>
@@ -382,15 +384,33 @@
     let current = 0;
     const slides = document.querySelectorAll('.slide');
     const total = slides.length;
+    const nextBtn = document.getElementById('next');
     
     function update() {
         slides.forEach((s, i) => s.classList.toggle('active', i === current));
+        
+        // Change NEXT to HOME on last slide
+        if (current === total - 1) {
+            nextBtn.textContent = 'HOME';
+        } else {
+            nextBtn.textContent = 'NEXT';
+        }
     }
     
-    document.getElementById('next').onclick = () => { if(current < total - 1) { current++; update(); } };
+    nextBtn.onclick = () => { 
+        if(current < total - 1) { 
+            current++; 
+            update(); 
+        } else {
+            // Last slide action: Go Home
+            window.location.href = '/';
+        }
+    };
+    
     document.getElementById('prev').onclick = () => { if(current > 0) { current--; update(); } };
+    
     document.addEventListener('keydown', e => {
-        if(e.key === 'ArrowRight') document.getElementById('next').click();
+        if(e.key === 'ArrowRight') nextBtn.click();
         if(e.key === 'ArrowLeft') document.getElementById('prev').click();
     });
 </script>
